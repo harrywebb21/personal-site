@@ -105,11 +105,11 @@ export default function Portfolio({ initialSection }: Props) {
 								href={pathFor(item.id)}
 								aria-current={active ? "page" : undefined}
 								onClick={(event) => go(item.id, event)}
-								className={`group flex items-baseline gap-2 font-pixel text-[0.68rem] tracking-[0.14em] uppercase transition-colors ${
-									active ? "text-neon" : "text-white/70 hover:text-white"
+								className={`group flex items-baseline gap-2 text-[0.72rem] font-medium tracking-[0.2em] uppercase transition-colors sm:text-sm ${
+									active ? "text-lime" : "text-white/70 hover:text-white"
 								}`}
 							>
-								<span className={`text-[0.58rem] tracking-[0.16em] ${active ? "text-neon" : "text-white/45"}`}>
+								<span className={`text-[0.62rem] tracking-[0.18em] ${active ? "text-lime" : "text-white/60"}`}>
 									{item.index}
 								</span>
 								{item.label}
@@ -130,7 +130,7 @@ function Status() {
 	return (
 		<div className="flex flex-col items-end gap-1 text-right">
 			<p className="flex items-center gap-2 text-sm font-semibold tracking-[0.14em] text-white uppercase">
-				<span className="avail-dot h-2.5 w-2.5 bg-neon" aria-hidden="true" />
+				<span className="avail-dot h-2.5 w-2.5 rounded-full bg-lime" aria-hidden="true" />
 				{profile.availability}
 			</p>
 			<p className="text-sm text-white/75">

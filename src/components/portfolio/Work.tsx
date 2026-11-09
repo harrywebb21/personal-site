@@ -3,7 +3,7 @@ import { experience } from "../../data/site";
 export default function Work() {
 	return (
 		<div className="mx-auto w-full max-w-5xl">
-			<p className="font-pixel text-[0.68rem] tracking-[0.22em] text-neon">02</p>
+			<p className="text-xs font-medium tracking-[0.32em] text-lime">02</p>
 			<h1
 				id="section-title"
 				tabIndex={-1}
@@ -15,14 +15,14 @@ export default function Work() {
 				{experience.map((job) => (
 					<article
 						key={job.company}
-						className="grid gap-6 border border-neon/20 bg-white/[0.03] p-5 sm:p-7 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:gap-8"
+						className="grid gap-6 rounded-3xl border border-white/10 bg-white/[0.035] p-5 sm:p-7 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:gap-8"
 					>
 						<img
 							src={job.logo.src}
 							width={job.logo.width}
 							height={job.logo.height}
 							alt={job.logo.alt}
-							className="h-16 w-16 object-cover sm:h-20 sm:w-20"
+							className="h-16 w-16 rounded-2xl object-cover sm:h-20 sm:w-20"
 						/>
 						<div>
 							<a
@@ -37,7 +37,7 @@ export default function Work() {
 							<ul className="mt-5 space-y-3">
 								{job.points.map((point) => (
 									<li key={point} className="flex gap-3 text-sm leading-relaxed text-white/75 sm:text-base">
-										<span className="mt-[0.55em] h-1.5 w-1.5 shrink-0 bg-flare" aria-hidden="true" />
+										<span className="mt-[0.55em] h-1.5 w-1.5 shrink-0 rounded-full bg-lime" aria-hidden="true" />
 										<span>{point}</span>
 									</li>
 								))}
