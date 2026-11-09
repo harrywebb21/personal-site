@@ -127,44 +127,44 @@ vec3 lidRain(vec2 px, vec2 res, float t, vec4 menu) {
       float hit = step(0.0, pastPx) * inCell * onLid * present;
       float flightT = pastPx / max(speed * cell.y, 1.0);
 
-      float spread = 4.0 + pastPx * 1.35;
-      float sheetLife = smoothstep(0.0, 5.0, pastPx) * smoothstep(70.0, 24.0, pastPx);
-      vec2 ell = vec2((px.x - headX) / spread, (px.y - menuT) / 4.0);
-      float sheet = smoothstep(0.34, 0.02, abs(length(ell) - 1.0)) * sheetLife * hit;
+      float spread = 3.0 + pastPx * 0.7;
+      float sheetLife = smoothstep(0.0, 6.0, pastPx) * smoothstep(48.0, 16.0, pastPx);
+      vec2 ell = vec2((px.x - headX) / spread, (px.y - menuT) / 2.2);
+      float sheet = smoothstep(0.4, 0.05, abs(length(ell) - 1.0)) * sheetLife * hit;
 
-      float burst = step(0.55, hash(id + vec2(3.4, fi + 1.7)));
-      for (int d = 0; d < 3; d++) {
+      float burst = step(0.82, hash(id + vec2(3.4, fi + 1.7)));
+      for (int d = 0; d < 2; d++) {
         float di = float(d);
         float h1 = hash(id + vec2(18.0 + di * 4.0, fi * 2.0 + 1.0));
         float h2 = hash(id + vec2(33.0 + di, 7.0 + fi));
-        float vx = (h1 - 0.5) * 170.0;
-        float vy = 80.0 + h2 * 90.0;
-        float grav = 260.0;
+        float vx = (h1 - 0.5) * 70.0;
+        float vy = 22.0 + h2 * 28.0;
+        float grav = 160.0;
         vec2 p = vec2(headX + vx * flightT, menuT + vy * flightT - grav * flightT * flightT * 0.5);
         vec2 vel = vec2(vx, vy - grav * flightT);
         float vlen = max(length(vel), 0.001);
-        vec2 tailEnd = p - vel / vlen * 11.0;
+        vec2 tailEnd = p - vel / vlen * 5.0;
         vec2 pa = px - p;
         vec2 ba = tailEnd - p;
         float along = clamp(dot(pa, ba) / max(dot(ba, ba), 0.001), 0.0, 1.0);
-        float tail = smoothstep(1.6, 0.0, length(pa - ba * along));
-        float drop = smoothstep(3.4, 0.6, length(px - p));
-        float show = smoothstep(0.0, 0.04, flightT) * smoothstep(0.55, 0.22, flightT);
-        show *= step(menuT - 8.0, p.y) * burst * hit;
-        wet += (drop * 1.4 + tail * 0.7) * show;
+        float tail = smoothstep(1.05, 0.0, length(pa - ba * along));
+        float drop = smoothstep(1.8, 0.35, length(px - p));
+        float show = smoothstep(0.0, 0.04, flightT) * smoothstep(0.36, 0.12, flightT);
+        show *= step(menuT - 4.0, p.y) * burst * hit;
+        wet += (drop * 0.42 + tail * 0.18) * show;
       }
 
-      float flowT = max(flightT - 0.05, 0.0);
-      float run = flowT * 78.0;
+      float flowT = max(flightT - 0.06, 0.0);
+      float run = flowT * 52.0;
       float ry = menuT - run;
       float onFace = step(menuB, px.y) * step(px.y, menuT) * step(menuL, px.x) * step(px.x, menuR);
-      float flowLife = smoothstep(0.05, 0.14, flightT) * smoothstep(1.05, 0.45, flowT);
-      float bead = smoothstep(3.6, 0.8, length(vec2((px.x - headX) * 0.75, px.y - ry)));
-      float trail = smoothstep(1.35, 0.0, abs(px.x - headX));
+      float flowLife = smoothstep(0.06, 0.16, flightT) * smoothstep(0.85, 0.4, flowT);
+      float bead = smoothstep(2.2, 0.5, length(vec2((px.x - headX) * 0.8, px.y - ry)));
+      float trail = smoothstep(0.9, 0.0, abs(px.x - headX));
       trail *= step(ry, px.y) * step(px.y, menuT - 1.5);
-      trail *= exp(-max(px.y - ry, 0.0) / 26.0);
-      wet += sheet * 0.7 + (bead * 0.8 + trail * 0.55) * onFace * flowLife * hit;
-      distort.y -= (sheet * 5.0 + trail * onFace * flowLife * hit * 8.0);
+      trail *= exp(-max(px.y - ry, 0.0) / 22.0);
+      wet += sheet * 0.28 + (bead * 0.32 + trail * 0.2) * onFace * flowLife * hit;
+      distort.y -= (sheet * 3.0 + trail * onFace * flowLife * hit * 5.0);
     }
   }
   return vec3(distort / res, wet);
@@ -210,7 +210,6 @@ void main() {
   float overMenu = step(menuL, px.x) * step(px.x, menuR) * step(menuB, px.y) * step(px.y, menuT) * step(1.0, uMenu.z);
   float wet = clamp(rain.z + lid.z, 0.0, 1.0);
   graded += wet * vec3(0.62, 0.66, 0.7) * (0.08 + luma * 0.5);
-  graded += vec3(0.8, 0.86, 0.92) * smoothstep(0.35, 1.0, lid.z) * 0.95;
 
   float scratch = step(0.996, hash(vec2(floor(uv.y * 220.0), floor(uv.x * uRes.x * 0.15))));
   graded += scratch * 0.045;
