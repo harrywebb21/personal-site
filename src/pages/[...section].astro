@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Portfolio from '../components/portfolio/Portfolio';
+import { nav, titles, type SectionId } from '../data/site';
+
+export function getStaticPaths() {
+	return [
+		{ params: { section: undefined } },
+		...nav.map((item) => ({ params: { section: item.id } })),
+	];
+}
+
+const section = (Astro.params.section ?? 'home') as SectionId;
+---
+
+<Layout title={titles[section]}>
+	<Portfolio client:load initialSection={section} />
+</Layout>

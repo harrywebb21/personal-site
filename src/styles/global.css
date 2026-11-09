@@ -1,0 +1,233 @@
+@import "tailwindcss";
+@import "@fontsource-variable/syne";
+@import "@fontsource-variable/outfit";
+@import "@fontsource/silkscreen/400.css";
+
+@theme {
+	--font-display: "Syne Variable", ui-sans-serif, system-ui, sans-serif;
+	--font-sans: "Outfit Variable", ui-sans-serif, system-ui, sans-serif;
+	--font-pixel: "Silkscreen", ui-monospace, monospace;
+	--color-ink: #080a08;
+	--color-lime: #8afd5b;
+	--color-mist: #a3b1a6;
+}
+
+html {
+	background: var(--color-ink);
+	color-scheme: dark;
+	scrollbar-color: #2c332c transparent;
+}
+
+body {
+	margin: 0;
+	min-height: 100%;
+	background: var(--color-ink);
+	color: white;
+	font-family: var(--font-sans);
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+
+::selection {
+	background: var(--color-lime);
+	color: #081208;
+}
+
+.pixel-city {
+	image-rendering: crisp-edges;
+	image-rendering: pixelated;
+}
+
+.game-menu {
+	position: relative;
+	width: min(36rem, 100%);
+	padding: 1.7rem 1.45rem 1.2rem;
+	background: rgba(8, 10, 12, 0.88);
+	box-shadow:
+		inset 0 0 0 4px #0c0e0c,
+		inset 0 0 0 8px #e4e0d4,
+		inset 0 0 0 12px #0c0e0c;
+}
+
+.game-menu::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.16) 0 2px, transparent 2px 4px);
+}
+
+.game-menu-kicker,
+.game-menu-role,
+.game-menu-list,
+.game-menu-status,
+.game-title {
+	position: relative;
+	font-family: var(--font-pixel);
+}
+
+.game-title {
+	margin: 0;
+	font-size: clamp(2.35rem, 5vw, 3.9rem);
+	font-weight: 400;
+	line-height: 1.08;
+	letter-spacing: 0.04em;
+	color: #f4f1e8;
+	text-shadow:
+		3px 0 0 #101210,
+		-1px 0 0 #101210,
+		0 3px 0 #101210,
+		4px 4px 0 #8afd5b;
+}
+
+.game-menu-kicker {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	margin: 0 0 0.9rem;
+	font-size: 0.72rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: #8afd5b;
+}
+
+.game-menu-blink {
+	width: 0.55rem;
+	height: 0.7rem;
+	background: #8afd5b;
+	animation: menu-blink 0.9s steps(1) infinite;
+}
+
+.game-menu-role {
+	margin-top: 0.85rem;
+	font-size: 0.68rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.72);
+}
+
+.game-menu-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	margin-top: 1.15rem;
+}
+
+.game-menu-item {
+	display: grid;
+	grid-template-columns: 1.1rem 2.2rem 1fr;
+	align-items: center;
+	padding: 0.45rem 0.35rem;
+	color: rgba(255, 255, 255, 0.78);
+	font-size: 0.78rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	text-decoration: none;
+}
+
+.game-menu-mark {
+	color: #8afd5b;
+	font-size: 0.85rem;
+	line-height: 1;
+}
+
+.game-menu-item.is-selected .game-menu-mark {
+	animation: menu-blink 0.9s steps(1) infinite;
+}
+
+.game-menu-item span:nth-child(2) {
+	color: rgba(255, 255, 255, 0.45);
+	font-size: 0.62rem;
+}
+
+.game-menu-item.is-selected {
+	color: #081208;
+	background: #8afd5b;
+	box-shadow: 4px 0 0 #8afd5b, -4px 0 0 #8afd5b;
+}
+
+.game-menu-item.is-selected span:nth-child(2),
+.game-menu-item.is-selected .game-menu-mark {
+	color: #081208;
+}
+
+.game-menu-status {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.65rem;
+	margin: 1.1rem 0 0;
+	color: rgba(255, 255, 255, 0.62);
+	font-size: 0.58rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.atmosphere {
+	position: absolute;
+	inset: 0;
+	background:
+		radial-gradient(ellipse 58% 46% at 50% 38%, rgba(138, 253, 91, 0.15), transparent 70%),
+		radial-gradient(ellipse 34% 26% at 84% 90%, rgba(20, 184, 166, 0.1), transparent 72%);
+}
+
+.atmosphere::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image:
+		linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+		linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+	background-size: 88px 88px;
+	mask-image: radial-gradient(ellipse at 50% 38%, #000 10%, transparent 72%);
+}
+
+.year-mark {
+	background-image: linear-gradient(100deg, #d8ffc4 0%, #8afd5b 38%, #7ef0d4 100%);
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+}
+
+.avail-dot {
+	animation: avail-glow 2.8s ease-in-out infinite alternate;
+}
+
+@keyframes avail-glow {
+	from {
+		box-shadow: 0 0 0 0 rgba(138, 253, 91, 0.25);
+	}
+	to {
+		box-shadow: 0 0 12px 2px rgba(138, 253, 91, 0.9);
+	}
+}
+
+.stage-in {
+	animation: stage-in 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes menu-blink {
+	50% {
+		opacity: 0;
+	}
+}
+
+@keyframes stage-in {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.avail-dot,
+	.stage-in,
+	.game-menu-blink,
+	.game-menu-item.is-selected .game-menu-mark {
+		animation: none;
+	}
+}
