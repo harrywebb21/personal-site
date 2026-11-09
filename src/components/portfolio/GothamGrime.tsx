@@ -179,8 +179,8 @@ void main() {
   vec3 city = texture2D(uCity, sampleUv).rgb;
   float luma = dot(city, vec3(0.299, 0.587, 0.114));
 
-  vec3 graded = mix(city * vec3(0.72, 0.78, 0.84), vec3(0.04, 0.05, 0.065), 0.18);
-  graded = mix(graded, graded * 0.55 + vec3(0.025, 0.035, 0.05), smoothstep(0.38, 0.02, luma) * 0.35);
+  vec3 graded = mix(city * vec3(0.34, 0.38, 0.34), vec3(0.012, 0.014, 0.012), 0.5);
+  graded = mix(graded, graded * 0.42 + vec3(0.05, 0.008, 0.02), smoothstep(0.42, 0.03, luma) * 0.5);
 
   float warm = smoothstep(0.28, 0.72, city.r - city.b + city.g * 0.15);
   graded = mix(graded, city * vec3(1.15, 0.78, 0.38), warm * 0.85);
@@ -192,16 +192,21 @@ void main() {
     texture2D(uCity, uv - vec2(0.0, 3.0 / uRes.y)).rgb
   ) * 0.25;
   float haloWarm = smoothstep(0.22, 0.62, halo.r - halo.b);
-  graded += vec3(0.55, 0.28, 0.08) * haloWarm * 0.28;
+  graded += vec3(0.55, 0.28, 0.08) * haloWarm * (1.0 - smoothstep(0.15, 0.45, halo.r - halo.g)) * 0.28;
+  float haloCyan = smoothstep(0.06, 0.4, halo.b - halo.r);
+  graded += vec3(0.04, 0.1, 0.09) * haloCyan * 0.08;
 
   float fog = fbm(uv * vec2(1.8, 1.05) + vec2(uTime * 0.035, uTime * 0.012));
   float street = smoothstep(0.62, 0.0, uv.y);
   float sky = smoothstep(0.55, 1.0, uv.y);
-  vec3 soot = vec3(0.07, 0.075, 0.085);
-  graded = mix(graded, soot, smoothstep(0.4, 0.9, fog) * (0.08 + street * 0.2 + sky * 0.14));
+  vec3 soot = vec3(0.015, 0.018, 0.016);
+  graded = mix(graded, soot, smoothstep(0.22, 0.8, fog) * (0.24 + street * 0.2 + sky * 0.34));
 
   float stain = smoothstep(0.62, 0.92, fbm(uv * 6.5 + vec2(2.2, 8.4)));
   graded *= mix(1.0, 0.62, stain * 0.55);
+
+  float sat = max(city.r, max(city.g, city.b)) - min(city.r, min(city.g, city.b));
+  graded = mix(graded, city * vec3(0.72, 0.62, 0.5), smoothstep(0.2, 0.55, sat) * 0.42);
 
   float menuL = uMenu.x;
   float menuR = uMenu.x + uMenu.z;
@@ -209,7 +214,7 @@ void main() {
   float menuB = menuT - uMenu.w;
   float overMenu = step(menuL, px.x) * step(px.x, menuR) * step(menuB, px.y) * step(px.y, menuT) * step(1.0, uMenu.z);
   float wet = clamp(rain.z + lid.z, 0.0, 1.0);
-  graded += wet * vec3(0.62, 0.66, 0.7) * (0.08 + luma * 0.5);
+  graded += wet * vec3(0.28, 0.32, 0.36) * (0.04 + luma * 0.22);
 
   float scratch = step(0.996, hash(vec2(floor(uv.y * 220.0), floor(uv.x * uRes.x * 0.15))));
   graded += scratch * 0.045;
@@ -219,12 +224,12 @@ void main() {
 
   vec2 vig = uv * 2.0 - 1.0;
   float v = smoothstep(0.55, 1.4, length(vig * vec2(0.92, 1.05)));
-  graded *= mix(1.0, 0.42, v);
+  graded *= mix(1.0, 0.3, v);
 
   vec3 color = clamp(graded, 0.0, 1.0);
   float alpha = 1.0;
   if (overMenu > 0.5) {
-    color = vec3(0.78, 0.82, 0.86);
+    color = vec3(0.68, 0.82, 0.92);
     alpha = clamp(wet * 0.78, 0.0, 0.9);
   }
   gl_FragColor = vec4(color, alpha);

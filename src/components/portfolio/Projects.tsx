@@ -3,7 +3,7 @@ import { projects } from "../../data/site";
 export default function Projects() {
 	return (
 		<div className="mx-auto w-full max-w-5xl">
-			<p className="text-xs font-medium tracking-[0.32em] text-lime">03</p>
+			<p className="font-pixel text-[0.68rem] tracking-[0.22em] text-neon">03</p>
 			<h1
 				id="section-title"
 				tabIndex={-1}
@@ -14,7 +14,7 @@ export default function Projects() {
 			<ul className="mt-10 grid gap-5 sm:mt-14 md:grid-cols-2">
 				{projects.map((project, index) => (
 					<li key={project.name}>
-						<figure className="overflow-hidden rounded-3xl border border-white/10 bg-black">
+						<figure className="overflow-hidden border border-neon/20 bg-black">
 							<div className="flex aspect-square items-center justify-center">
 								<img
 									src={project.image.src}

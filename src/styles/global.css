@@ -7,15 +7,16 @@
 	--font-display: "Syne Variable", ui-sans-serif, system-ui, sans-serif;
 	--font-sans: "Outfit Variable", ui-sans-serif, system-ui, sans-serif;
 	--font-pixel: "Silkscreen", ui-monospace, monospace;
-	--color-ink: #080a08;
-	--color-lime: #8afd5b;
-	--color-mist: #a3b1a6;
+	--color-ink: #07080d;
+	--color-neon: #5ce1ff;
+	--color-flare: #ff3b7a;
+	--color-mist: #9aa6b5;
 }
 
 html {
 	background: var(--color-ink);
 	color-scheme: dark;
-	scrollbar-color: #2c332c transparent;
+	scrollbar-color: #2a3548 transparent;
 }
 
 body {
@@ -29,8 +30,8 @@ body {
 }
 
 ::selection {
-	background: var(--color-lime);
-	color: #081208;
+	background: var(--color-neon);
+	color: #061018;
 }
 
 .pixel-city {
@@ -42,11 +43,11 @@ body {
 	position: relative;
 	width: min(36rem, 100%);
 	padding: 1.7rem 1.45rem 1.2rem;
-	background: rgba(8, 10, 12, 0.88);
+	background: rgba(5, 7, 12, 0.9);
 	box-shadow:
-		inset 0 0 0 4px #0c0e0c,
-		inset 0 0 0 8px #e4e0d4,
-		inset 0 0 0 12px #0c0e0c;
+		inset 0 0 0 3px #05060a,
+		inset 0 0 0 4px var(--color-neon),
+		inset 0 0 0 7px #05060a;
 }
 
 .game-menu::before {
@@ -54,7 +55,7 @@ body {
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
-	background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.16) 0 2px, transparent 2px 4px);
+	background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.22) 0 2px, transparent 2px 4px);
 }
 
 .game-menu-kicker,
@@ -72,12 +73,12 @@ body {
 	font-weight: 400;
 	line-height: 1.08;
 	letter-spacing: 0.04em;
-	color: #f4f1e8;
+	color: #eef3f8;
 	text-shadow:
-		3px 0 0 #101210,
-		-1px 0 0 #101210,
-		0 3px 0 #101210,
-		4px 4px 0 #8afd5b;
+		3px 0 0 #0a0c12,
+		-1px 0 0 #0a0c12,
+		0 3px 0 #0a0c12,
+		4px 4px 0 var(--color-flare);
 }
 
 .game-menu-kicker {
@@ -88,13 +89,13 @@ body {
 	font-size: 0.72rem;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
-	color: #8afd5b;
+	color: var(--color-neon);
 }
 
 .game-menu-blink {
 	width: 0.55rem;
 	height: 0.7rem;
-	background: #8afd5b;
+	background: var(--color-neon);
 	animation: menu-blink 0.9s steps(1) infinite;
 }
 
@@ -103,7 +104,7 @@ body {
 	font-size: 0.68rem;
 	letter-spacing: 0.06em;
 	text-transform: uppercase;
-	color: rgba(255, 255, 255, 0.72);
+	color: rgba(198, 214, 226, 0.74);
 }
 
 .game-menu-list {
@@ -118,7 +119,7 @@ body {
 	grid-template-columns: 1.1rem 2.2rem 1fr;
 	align-items: center;
 	padding: 0.45rem 0.35rem;
-	color: rgba(255, 255, 255, 0.78);
+	color: rgba(226, 234, 242, 0.8);
 	font-size: 0.78rem;
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
@@ -126,7 +127,7 @@ body {
 }
 
 .game-menu-mark {
-	color: #8afd5b;
+	color: var(--color-neon);
 	font-size: 0.85rem;
 	line-height: 1;
 }
@@ -136,19 +137,19 @@ body {
 }
 
 .game-menu-item span:nth-child(2) {
-	color: rgba(255, 255, 255, 0.45);
+	color: rgba(180, 198, 214, 0.55);
 	font-size: 0.62rem;
 }
 
 .game-menu-item.is-selected {
-	color: #081208;
-	background: #8afd5b;
-	box-shadow: 4px 0 0 #8afd5b, -4px 0 0 #8afd5b;
+	color: #061018;
+	background: var(--color-neon);
+	box-shadow: 4px 0 0 var(--color-neon), -4px 0 0 var(--color-neon);
 }
 
 .game-menu-item.is-selected span:nth-child(2),
 .game-menu-item.is-selected .game-menu-mark {
-	color: #081208;
+	color: #061018;
 }
 
 .game-menu-status {
@@ -157,7 +158,7 @@ body {
 	align-items: center;
 	gap: 0.65rem;
 	margin: 1.1rem 0 0;
-	color: rgba(255, 255, 255, 0.62);
+	color: rgba(198, 214, 226, 0.66);
 	font-size: 0.58rem;
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
@@ -167,8 +168,8 @@ body {
 	position: absolute;
 	inset: 0;
 	background:
-		radial-gradient(ellipse 58% 46% at 50% 38%, rgba(138, 253, 91, 0.15), transparent 70%),
-		radial-gradient(ellipse 34% 26% at 84% 90%, rgba(20, 184, 166, 0.1), transparent 72%);
+		radial-gradient(ellipse 48% 40% at 12% 0%, rgba(255, 59, 122, 0.16), transparent 70%),
+		radial-gradient(ellipse 42% 36% at 100% 100%, rgba(92, 225, 255, 0.12), transparent 72%);
 }
 
 .atmosphere::after {
@@ -176,14 +177,14 @@ body {
 	position: absolute;
 	inset: 0;
 	background-image:
-		linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-		linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+		linear-gradient(to right, rgba(92, 225, 255, 0.05) 1px, transparent 1px),
+		linear-gradient(to bottom, rgba(92, 225, 255, 0.05) 1px, transparent 1px);
 	background-size: 88px 88px;
 	mask-image: radial-gradient(ellipse at 50% 38%, #000 10%, transparent 72%);
 }
 
 .year-mark {
-	background-image: linear-gradient(100deg, #d8ffc4 0%, #8afd5b 38%, #7ef0d4 100%);
+	background-image: linear-gradient(100deg, #d9f7ff 0%, #5ce1ff 40%, #ff3b7a 100%);
 	background-clip: text;
 	-webkit-background-clip: text;
 	color: transparent;
@@ -195,11 +196,16 @@ body {
 
 @keyframes avail-glow {
 	from {
-		box-shadow: 0 0 0 0 rgba(138, 253, 91, 0.25);
+		box-shadow: 0 0 0 0 rgba(92, 225, 255, 0.2);
 	}
 	to {
-		box-shadow: 0 0 12px 2px rgba(138, 253, 91, 0.9);
+		box-shadow: 0 0 12px 2px rgba(92, 225, 255, 0.75);
 	}
+}
+
+.noir-still {
+	filter: grayscale(0.82) contrast(1.14) brightness(0.9);
+	box-shadow: 0 0 0 1px rgba(92, 225, 255, 0.4);
 }
 
 .stage-in {

@@ -59,7 +59,7 @@ export default function Home({ onNavigate }: Props) {
 				))}
 			</nav>
 			<p className="game-menu-status">
-				<span className="avail-dot h-2 w-2 rounded-full bg-lime" aria-hidden="true" />
+				<span className="avail-dot h-2 w-2 bg-neon" aria-hidden="true" />
 				<span>{profile.availability}</span>
 				<MenuClock />
 				<span>{profile.location}</span>

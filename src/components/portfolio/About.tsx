@@ -3,7 +3,7 @@ import { about } from "../../data/site";
 export default function About() {
 	return (
 		<div className="mx-auto w-full max-w-5xl">
-			<p className="text-xs font-medium tracking-[0.32em] text-lime">01</p>
+			<p className="font-pixel text-[0.68rem] tracking-[0.22em] text-neon">01</p>
 			<h1
 				id="section-title"
 				tabIndex={-1}
@@ -17,7 +17,7 @@ export default function About() {
 					width={about.portrait.width}
 					height={about.portrait.height}
 					alt={about.portrait.alt}
-					className="w-28 rounded-2xl ring-1 ring-white/15 sm:w-36"
+					className="noir-still w-28 sm:w-36"
 				/>
 				<div>
 					<p className="font-display text-2xl leading-snug font-semibold tracking-[-0.03em] text-white sm:text-3xl">
@@ -32,7 +32,7 @@ export default function About() {
 						{about.stack.map((item) => (
 							<li
 								key={item}
-								className="rounded-full border border-white/15 px-3 py-1 text-sm text-white/80"
+								className="border border-neon/25 px-3 py-1 text-sm text-white/80"
 							>
 								{item}
 							</li>
