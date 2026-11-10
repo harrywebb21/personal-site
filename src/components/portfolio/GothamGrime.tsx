@@ -42,129 +42,130 @@ float fbm(vec2 p) {
   return v;
 }
 
-vec3 glassRain(vec2 px, vec2 res, float t, vec4 menu) {
-  vec2 distort = vec2(0.0);
-  float wet = 0.0;
-  float menuT = res.y - menu.y;
-  float blocked = step(menu.x, px.x) * step(px.x, menu.x + menu.z) * step(px.y, menuT + 0.5) * step(1.0, menu.z);
-  for (int i = 0; i < 3; i++) {
-    float fi = float(i);
-    vec2 cell = vec2(54.0 + fi * 28.0, 160.0 + fi * 90.0);
-    float speed = 1.15 - fi * 0.28;
-    vec2 id = floor(px / cell);
-    vec2 f = fract(px / cell);
-    float n = hash(id + vec2(fi * 5.17, 2.4));
-    float present = step(0.28 + fi * 0.08, n);
-    float x = 0.5 + (hash(id + 1.9) - 0.5) * 0.62;
-    float head = fract(hash(id + 8.2) - t * speed);
-    float dx = f.x - x;
-    float dy = f.y - head;
-    float above = max(dy, 0.0);
-    float tail = 0.16 + hash(id + 4.4) * 0.28 + fi * 0.05;
-    float width = (1.4 + fi * 0.7) / cell.x;
-    float streak = smoothstep(width * (1.0 + above * 5.0), 0.0, abs(dx));
-    streak *= smoothstep(tail, tail * 0.2, above) * smoothstep(-0.01, 0.015, dy);
-    streak *= present * (1.0 - blocked);
-    distort.x += dx * cell.x * streak * 0.35;
-    distort.y -= streak * (18.0 + fi * 8.0);
-
-    float age = 1.0 - head;
-    vec2 hit = (vec2(x, 0.02) - f) * cell;
-    float radius = age * (22.0 + hash(id + 6.6) * 26.0);
-    float ring = abs(length(hit) - radius);
-    float ripple = smoothstep(3.5, 0.0, ring) * smoothstep(0.7, 0.05, age) * smoothstep(0.0, 0.03, age);
-    ripple *= present * (1.0 - blocked);
-    vec2 normal = hit / max(length(hit), 0.001);
-    distort -= normal * ripple * 7.0;
-    wet += streak * 0.9 + ripple;
-  }
-
-  for (int i = 0; i < 2; i++) {
-    float fi = float(i);
-    vec2 cell = vec2(96.0 + fi * 40.0, 78.0 + fi * 24.0);
-    vec2 id = floor(px / cell);
-    vec2 f = fract(px / cell);
-    float n = hash(id + vec2(21.0, fi * 3.7));
-    float present = step(0.9, n);
-    float slide = fract(hash(id + 5.1) - t * (0.035 + fi * 0.02));
-    vec2 c = vec2(hash(id + 1.3), slide);
-    vec2 q = (f - c) * cell;
-    float bead = smoothstep(13.0, 4.0, length(q)) * present;
-    float trail = smoothstep(2.4, 0.0, abs(q.x)) * smoothstep(0.0, 4.0, q.y) * smoothstep(42.0, 8.0, q.y);
-    trail *= present;
-    distort -= q * bead * 0.22;
-    distort.y -= trail * 10.0;
-    wet += bead * 1.2 + trail * 0.4;
-  }
-  return vec3(distort / res, wet);
+float gPool;
+float streakTail(vec2 id, float fi) {
+  return 34.0 + fi * 26.0 + hash(id + 4.4) * (48.0 + fi * 30.0);
 }
 
-vec3 lidRain(vec2 px, vec2 res, float t, vec4 menu) {
+// x = head, y = remaining length, z = how far the drop has sunk into the surface
+vec3 dropState(float phase, float t, float speed, float resY, float surface, float tailLen) {
+  float fallDist = max(resY - surface, 1.0);
+  float fade = 40.0;
+  float span = fallDist + tailLen + fade;
+  float traveled = span * (1.0 - fract(phase - t * speed / span));
+  float sunk = max(traveled - fallDist, 0.0);
+  float falling = step(traveled, fallDist);
+  float head = mix(surface, resY - traveled, falling);
+  float remain = max(tailLen - sunk, 0.0);
+  return vec3(head, remain, sunk);
+}
+
+vec3 glassRain(vec2 px, vec2 res, float t, vec4 menu) {
   vec2 distort = vec2(0.0);
   float wet = 0.0;
   float menuL = menu.x;
   float menuR = menu.x + menu.z;
   float menuT = res.y - menu.y;
-  float menuB = menuT - menu.w;
-  float alive = step(1.0, menu.z);
+  float menuOn = step(1.0, menu.z);
   for (int i = 0; i < 3; i++) {
     float fi = float(i);
-    vec2 cell = vec2(54.0 + fi * 28.0, 160.0 + fi * 90.0);
-    float speed = 1.15 - fi * 0.28;
-    float idy = floor(menuT / cell.y);
-    float idx0 = floor(px.x / cell.x);
-    for (int s = 0; s < 5; s++) {
-      vec2 id = vec2(idx0 + float(s) - 2.0, idy);
-      float n = hash(id + vec2(fi * 5.17, 2.4));
-      float present = step(0.28 + fi * 0.08, n) * alive;
+    float cellX = 54.0 + fi * 28.0;
+    float speed = 230.0 - fi * 50.0;
+    float col = floor(px.x / cellX);
+    for (int d = 0; d < 4; d++) {
+      float di = float(d);
+      vec2 id = vec2(col, di + fi * 17.0);
+      float present = step(0.28 + fi * 0.08, hash(id + vec2(fi * 5.17, 2.4)));
       float x = 0.5 + (hash(id + 1.9) - 0.5) * 0.62;
-      float head = fract(hash(id + 8.2) - t * speed);
-      float headX = (id.x + x) * cell.x;
-      float lidF = menuT / cell.y - idy;
-      float inCell = step(0.0, lidF) * step(lidF, 1.0);
-      float onLid = step(menuL, headX) * step(headX, menuR);
-      float pastPx = (lidF - head) * cell.y;
-      float hit = step(0.0, pastPx) * inCell * onLid * present;
-      float flightT = pastPx / max(speed * cell.y, 1.0);
+      float headX = (col + x) * cellX;
+      float tail = streakTail(id, fi);
+      float onMenu = step(menuL, headX) * step(headX, menuR) * menuOn;
+      float surface = mix(0.0, menuT, onMenu);
+      vec3 state = dropState(hash(id + 8.2), t, speed, res.y, surface, tail);
+      float headY = state.x;
+      float remain = state.y;
+      float dx = px.x - headX;
+      float dy = px.y - headY;
+      float above = max(dy, 0.0);
+      float width = (1.4 + fi * 0.7) * (1.0 + above * 0.018);
+      float len = max(remain, 1.0);
+      float streak = smoothstep(width, 0.0, abs(dx));
+      streak *= smoothstep(len, len * 0.22, above) * smoothstep(-2.2, 1.4, dy);
+      streak *= present * step(1.0, remain);
+      distort.x += dx * streak * 0.35;
+      distort.y -= streak * (18.0 + fi * 8.0);
+      wet += streak * 0.9;
+      float sinking = smoothstep(0.0, 8.0, state.z) * step(1.0, remain);
+      gPool += streak * sinking * 0.55;
+    }
+  }
 
-      float spread = 3.0 + pastPx * 0.7;
-      float sheetLife = smoothstep(0.0, 6.0, pastPx) * smoothstep(48.0, 16.0, pastPx);
-      vec2 ell = vec2((px.x - headX) / spread, (px.y - menuT) / 2.2);
-      float sheet = smoothstep(0.4, 0.05, abs(length(ell) - 1.0)) * sheetLife * hit;
-
-      float burst = step(0.82, hash(id + vec2(3.4, fi + 1.7)));
-      for (int d = 0; d < 2; d++) {
+  for (int i = 0; i < 2; i++) {
+    float fi = float(i);
+    float cellX = 96.0 + fi * 40.0;
+    float speed = 18.0 + fi * 8.0;
+    float col0 = floor(px.x / cellX);
+    for (int s = 0; s < 3; s++) {
+      float col = col0 + float(s) - 1.0;
+      for (int d = 0; d < 4; d++) {
         float di = float(d);
-        float h1 = hash(id + vec2(18.0 + di * 4.0, fi * 2.0 + 1.0));
-        float h2 = hash(id + vec2(33.0 + di, 7.0 + fi));
-        float vx = (h1 - 0.5) * 70.0;
-        float vy = 22.0 + h2 * 28.0;
-        float grav = 160.0;
-        vec2 p = vec2(headX + vx * flightT, menuT + vy * flightT - grav * flightT * flightT * 0.5);
-        vec2 vel = vec2(vx, vy - grav * flightT);
-        float vlen = max(length(vel), 0.001);
-        vec2 tailEnd = p - vel / vlen * 5.0;
-        vec2 pa = px - p;
-        vec2 ba = tailEnd - p;
-        float along = clamp(dot(pa, ba) / max(dot(ba, ba), 0.001), 0.0, 1.0);
-        float tail = smoothstep(1.05, 0.0, length(pa - ba * along));
-        float drop = smoothstep(1.8, 0.35, length(px - p));
-        float show = smoothstep(0.0, 0.04, flightT) * smoothstep(0.36, 0.12, flightT);
-        show *= step(menuT - 4.0, p.y) * burst * hit;
-        wet += (drop * 0.42 + tail * 0.18) * show;
+        vec2 id = vec2(col, di + 40.0 + fi * 6.0);
+        float present = step(0.72, hash(id + vec2(21.0, fi * 3.7)));
+        float headX = (col + hash(id + 1.3)) * cellX;
+        float tail = 68.0;
+        vec3 state = dropState(hash(id + 5.1), t, speed, res.y, 0.0, tail);
+        float remain = state.y;
+        float live = present * smoothstep(0.0, 5.0, remain);
+        vec2 q = vec2(px.x - headX, px.y - state.x);
+        float beadR = mix(10.0, 2.2, clamp(state.z / tail, 0.0, 1.0));
+        float bead = smoothstep(beadR, beadR * 0.32, length(q)) * live;
+        float trailEnd = max(remain, 1.0);
+        float trail = smoothstep(1.6, 0.0, abs(q.x)) * smoothstep(0.0, 4.0, q.y) * smoothstep(trailEnd, trailEnd * 0.25, q.y);
+        trail *= live;
+        distort -= q * bead * 0.22;
+        distort.y -= trail * 8.0;
+        wet += bead * 1.15 + trail * 0.35;
+        float grow = clamp(state.z / tail, 0.0, 1.0);
+        float life = smoothstep(0.0, 4.0, state.z) * (1.0 - smoothstep(tail, tail + 36.0, state.z));
+        float radius = 3.2 + grow * 10.0;
+        vec2 ell = vec2((px.x - headX) / radius, px.y / 3.0);
+        gPool += smoothstep(1.05, 0.32, length(ell)) * life * present;
       }
+    }
+  }
+  return vec3(distort / res, wet);
+}
 
-      float flowT = max(flightT - 0.06, 0.0);
-      float run = flowT * 52.0;
-      float ry = menuT - run;
-      float onFace = step(menuB, px.y) * step(px.y, menuT) * step(menuL, px.x) * step(px.x, menuR);
-      float flowLife = smoothstep(0.06, 0.16, flightT) * smoothstep(0.85, 0.4, flowT);
-      float bead = smoothstep(2.2, 0.5, length(vec2((px.x - headX) * 0.8, px.y - ry)));
-      float trail = smoothstep(0.9, 0.0, abs(px.x - headX));
-      trail *= step(ry, px.y) * step(px.y, menuT - 1.5);
-      trail *= exp(-max(px.y - ry, 0.0) / 22.0);
-      wet += sheet * 0.28 + (bead * 0.32 + trail * 0.2) * onFace * flowLife * hit;
-      distort.y -= (sheet * 3.0 + trail * onFace * flowLife * hit * 5.0);
+vec3 edgeRain(vec2 px, vec2 res, float t, float edgeY, float edgeL, float edgeR, float faceB, float alive, float holeL, float holeR, float holeOn) {
+  vec2 distort = vec2(0.0);
+  float wet = 0.0;
+  for (int i = 0; i < 3; i++) {
+    float fi = float(i);
+    float cellX = 54.0 + fi * 28.0;
+    float speed = 230.0 - fi * 50.0;
+    float col0 = floor(px.x / cellX);
+    for (int s = 0; s < 5; s++) {
+      float col = col0 + float(s) - 2.0;
+      for (int d = 0; d < 4; d++) {
+        float di = float(d);
+        vec2 id = vec2(col, di + fi * 17.0);
+        float present = step(0.28 + fi * 0.08, hash(id + vec2(fi * 5.17, 2.4))) * alive;
+        float x = 0.5 + (hash(id + 1.9) - 0.5) * 0.62;
+        float headX = (col + x) * cellX;
+        float onEdge = step(edgeL, headX) * step(headX, edgeR);
+        float open = 1.0 - step(holeL, headX) * step(headX, holeR) * holeOn;
+        float tail = streakTail(id, fi);
+        vec3 state = dropState(hash(id + 8.2), t, speed, res.y, edgeY, tail);
+        float hit = onEdge * present * open * step(faceB - 2.0, edgeY);
+        float grow = clamp(state.z / max(tail, 1.0), 0.0, 1.0);
+        float life = smoothstep(0.0, 5.0, state.z) * (1.0 - smoothstep(tail, tail + 40.0, state.z));
+        float radius = 2.8 + grow * (9.0 + hash(id + 6.6) * 8.0);
+        vec2 ell = vec2((px.x - headX) / radius, (px.y - edgeY) / (2.6 + grow * 1.6));
+        float pool = smoothstep(1.08, 0.28, length(ell)) * life * hit;
+        float ring = smoothstep(0.22, 0.0, abs(length(ell) - 0.92)) * life * hit;
+        wet += pool * 0.72 + ring * 0.22;
+        distort.y -= pool * 4.0;
+      }
     }
   }
   return vec3(distort / res, wet);
@@ -173,9 +174,22 @@ vec3 lidRain(vec2 px, vec2 res, float t, vec4 menu) {
 void main() {
   vec2 uv = vUv;
   vec2 px = uv * uRes;
+  float menuL = uMenu.x;
+  float menuR = uMenu.x + uMenu.z;
+  float menuT = uRes.y - uMenu.y;
+  float menuB = menuT - uMenu.w;
+  float menuOn = step(1.0, uMenu.z);
+  gPool = 0.0;
   vec3 rain = glassRain(px, uRes, uTime, uMenu);
-  vec3 lid = lidRain(px, uRes, uTime, uMenu);
-  vec2 sampleUv = clamp(uv + rain.xy + lid.xy, 0.001, 0.999);
+  vec3 lid = vec3(0.0);
+  vec3 ground = vec3(0.0);
+  if (menuOn > 0.5 && px.y < menuT + 22.0 && px.y > menuT - 90.0) {
+    lid = edgeRain(px, uRes, uTime, menuT, menuL, menuR, menuB, 1.0, 0.0, 0.0, 0.0);
+  }
+  if (px.y < 36.0) {
+    ground = edgeRain(px, uRes, uTime, 0.0, 0.0, uRes.x, 0.0, 1.0, menuL, menuR, menuOn);
+  }
+  vec2 sampleUv = clamp(uv + rain.xy + lid.xy + ground.xy, 0.001, 0.999);
   vec3 city = texture2D(uCity, sampleUv).rgb;
   float luma = dot(city, vec3(0.299, 0.587, 0.114));
 
@@ -203,11 +217,7 @@ void main() {
   float stain = smoothstep(0.62, 0.92, fbm(uv * 6.5 + vec2(2.2, 8.4)));
   graded *= mix(1.0, 0.62, stain * 0.55);
 
-  float menuL = uMenu.x;
-  float menuR = uMenu.x + uMenu.z;
-  float menuT = uRes.y - uMenu.y;
-  float menuB = menuT - uMenu.w;
-  float overMenu = step(menuL, px.x) * step(px.x, menuR) * step(menuB, px.y) * step(px.y, menuT) * step(1.0, uMenu.z);
+  float overMenu = step(menuL, px.x) * step(px.x, menuR) * step(menuB, px.y) * step(px.y, menuT) * menuOn;
   float wet = clamp(rain.z + lid.z, 0.0, 1.0);
   graded += wet * vec3(0.62, 0.66, 0.7) * (0.08 + luma * 0.5);
 
@@ -225,7 +235,11 @@ void main() {
   float alpha = 1.0;
   if (overMenu > 0.5) {
     color = vec3(0.78, 0.82, 0.86);
-    alpha = clamp(wet * 0.78, 0.0, 0.9);
+    alpha = clamp((wet + gPool) * 0.78, 0.0, 0.9);
+  } else {
+    float splash = clamp(ground.z + gPool, 0.0, 1.0);
+    vec3 sheen = color * vec3(0.78, 0.84, 0.92) + vec3(0.015, 0.02, 0.028);
+    color = mix(color, sheen, splash * 0.72);
   }
   gl_FragColor = vec4(color, alpha);
 }

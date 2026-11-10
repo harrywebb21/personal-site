@@ -1,12 +1,13 @@
 @import "tailwindcss";
 @import "@fontsource-variable/syne";
 @import "@fontsource-variable/outfit";
-@import "@fontsource/silkscreen/400.css";
+@import "@fontsource/special-elite/400.css";
 
 @theme {
 	--font-display: "Syne Variable", ui-sans-serif, system-ui, sans-serif;
 	--font-sans: "Outfit Variable", ui-sans-serif, system-ui, sans-serif;
-	--font-pixel: "Silkscreen", ui-monospace, monospace;
+	--font-stencil: "Special Elite", ui-serif, serif;
+	--font-sign: "Special Elite", ui-serif, serif;
 	--color-ink: #080a08;
 	--color-lime: #8afd5b;
 	--color-mist: #a3b1a6;
@@ -38,15 +39,467 @@ body {
 	image-rendering: pixelated;
 }
 
+.sprite-city {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	overflow: hidden;
+	pointer-events: none;
+	background: #080d15;
+}
+
+.sprite-city-world {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 1920px;
+	height: 1080px;
+	overflow: hidden;
+	--camera-travel: min(5vw, 85px);
+	transform: translate(-50%, -50%) scale(var(--world-scale));
+	transform-origin: center;
+	isolation: isolate;
+	animation: cctv-camera-pan 36s ease-in-out infinite;
+}
+
+@keyframes cctv-camera-pan {
+	0%, 8%, 100% { transform: translate(calc(-50% - var(--camera-travel)), -50%) scale(var(--world-scale)); }
+	47%, 55% { transform: translate(calc(-50% + var(--camera-travel)), -50%) scale(var(--world-scale)); }
+}
+
+.city-sky,
+.city-clouds,
+.city-rain,
+.city-flash,
+.city-vignette {
+	position: absolute;
+	inset: 0;
+}
+
+.city-sky {
+	background: radial-gradient(ellipse at 70% 73%, #65402b 0, #303039 24%, transparent 48%),
+		linear-gradient(#080d16 0%, #15202b 48%, #42332e 86%, #1a1b20 100%);
+}
+
+.city-backdrop {
+	position: absolute;
+	inset: 0;
+	background: url('/city/wasteland-backdrop.png') center bottom / cover no-repeat;
+	opacity: .9;
+}
+
+.city-skyglow {
+	position: absolute;
+	inset: 310px -80px 310px;
+	background:
+		radial-gradient(ellipse 360px 190px at 17% 82%, #b86d3b24, transparent 75%),
+		radial-gradient(ellipse 490px 200px at 53% 88%, #b65b342a, transparent 78%),
+		radial-gradient(ellipse 310px 160px at 86% 84%, #d0874825, transparent 75%);
+	filter: blur(28px);
+	mix-blend-mode: screen;
+	animation: city-skyglow-pulse 17s ease-in-out infinite alternate;
+}
+
+.city-moon {
+	position: absolute;
+	left: 12%;
+	top: 12%;
+	width: 86px;
+	height: 86px;
+	border-radius: 50%;
+	background: #b9a88d;
+	box-shadow: 0 0 60px 24px #bba17a2c;
+	opacity: 0.48;
+}
+
+.city-clouds {
+	height: 640px;
+	opacity: .36;
+	background: radial-gradient(ellipse at 10% 46%, #131b25 0 9%, transparent 21%),
+		radial-gradient(ellipse at 39% 28%, #1a222a 0 12%, transparent 25%),
+		radial-gradient(ellipse at 77% 41%, #202631 0 13%, transparent 27%),
+		radial-gradient(ellipse at 94% 21%, #181e27 0 9%, transparent 23%);
+	background-size: 1180px 530px;
+	animation: city-cloud-drift 220s linear infinite;
+}
+
+.city-clouds--front {
+	top: 280px;
+	opacity: 0.32;
+	filter: blur(8px);
+	animation-duration: 135s;
+}
+
+.city-searchlight {
+	position: absolute;
+	left: 26%;
+	top: 18%;
+	width: 130px;
+	height: 690px;
+	transform-origin: 50% 100%;
+	background: linear-gradient(to top, #b9b5a22b, transparent 76%);
+	clip-path: polygon(47% 100%, 53% 100%, 100% 0, 0 0);
+	mix-blend-mode: screen;
+	animation: city-search 13s ease-in-out infinite alternate;
+}
+
+.city-searchlight--two {
+	left: 72%;
+	top: 22%;
+	opacity: 0.55;
+	animation-duration: 17s;
+	animation-delay: -6s;
+}
+
+.city-distant-ruins {
+	position: absolute;
+	inset: 0;
+	filter: blur(1px);
+	opacity: .7;
+}
+.city-distant-building {
+	position: absolute;
+	bottom: 375px;
+	background: linear-gradient(#121b22, #172027 55%, #242a2c);
+	clip-path: polygon(0 12%, 16% 12%, 16% 4%, 64% 4%, 64% 0, 84% 0, 84% 18%, 100% 18%, 100% 100%, 0 100%);
+}
+.city-distant-building::after {
+	content: "";
+	position: absolute;
+	inset: 13px 10px;
+	background: repeating-linear-gradient(90deg, transparent 0 17px, #a9854d44 18px 20px, transparent 21px 28px),
+		repeating-linear-gradient(0deg, transparent 0 22px, #b58b4c30 23px 25px, transparent 26px 35px);
+	mask-image: repeating-linear-gradient(0deg, transparent 0 20px, #000 21px 25px, transparent 26px 37px);
+	animation: city-skyline-windows 9s steps(1) infinite;
+	animation-delay: var(--window-delay);
+}
+.city-distant-building--1::before,
+.city-distant-building--3::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 58%;
+	width: 4px;
+	height: 5px;
+	background: #c85a39;
+	box-shadow: 0 0 12px 3px #c8433188;
+	animation: city-beacon 3.5s steps(1) infinite;
+	animation-delay: var(--window-delay);
+}
+.city-distant-building--1 { clip-path: polygon(0 0, 58% 0, 58% 24%, 77% 24%, 77% 35%, 100% 35%, 100% 100%, 0 100%); }
+.city-distant-building--2 { clip-path: polygon(0 23%, 22% 23%, 22% 0, 34% 0, 34% 23%, 70% 23%, 70% 13%, 100% 13%, 100% 100%, 0 100%); }
+.city-distant-building--3 { clip-path: polygon(0 13%, 26% 13%, 26% 0, 47% 0, 47% 18%, 100% 18%, 100% 100%, 0 100%); }
+.city-cooling-tower {
+	position: absolute;
+	bottom: 370px;
+	left: 73%;
+	width: 145px;
+	height: 230px;
+	background: linear-gradient(90deg, #141c22, #343b3b 48%, #161d22);
+	clip-path: polygon(5% 0, 95% 0, 75% 47%, 100% 100%, 0 100%, 25% 47%);
+}
+.city-cooling-tower--two { left: 83%; width: 112px; height: 175px; opacity: .75; }
+.city-distant-smoke {
+	position: absolute;
+	left: 76%; bottom: 540px;
+	width: 310px; height: 185px;
+	background: radial-gradient(ellipse at 22% 72%, #77766d55 0 15%, transparent 28%),
+		radial-gradient(ellipse at 52% 49%, #71726e55 0 17%, transparent 30%),
+		radial-gradient(ellipse at 80% 25%, #6c6d6a44 0 18%, transparent 31%);
+	filter: blur(12px);
+	animation: city-smoke-drift 22s ease-in-out infinite alternate;
+}
+.city-distant-smoke--two { left: 83%; bottom: 475px; opacity: .6; animation-delay: -12s; }
+
+.city-layer {
+	position: absolute;
+	inset: 0;
+}
+
+.city-layer--far { filter: blur(3px) brightness(0.54) saturate(0.72); }
+.city-layer--mid { filter: blur(1.2px) brightness(0.72) saturate(0.82); }
+.city-layer--near { filter: brightness(0.9) saturate(0.86); }
+.city-layer--far-props { filter: blur(1.6px) brightness(.64) saturate(.68); }
+.city-layer--mid-props { filter: blur(.65px) brightness(.79) saturate(.74); }
+.city-layer--highway { filter: blur(2px) brightness(0.55) saturate(0.7); }
+.city-layer--fallout-dust { filter: blur(2px); }
+.city-layer--terrain { filter: brightness(0.78) saturate(0.76); }
+
+.city-ground {
+	position: absolute;
+	left: 0;
+	width: 100%;
+	background-color: #211f1e;
+	background-image:
+		radial-gradient(ellipse 31px 9px at 11% 19%, #4b4238 0 42%, transparent 46%),
+		radial-gradient(ellipse 54px 13px at 79% 46%, #493d34 0 38%, transparent 43%),
+		radial-gradient(ellipse 12px 5px at 46% 67%, #534739 0 41%, transparent 47%),
+		repeating-linear-gradient(167deg, transparent 0 92px, #151719 94px 97px, transparent 99px 183px),
+		repeating-linear-gradient(14deg, transparent 0 73px, #65554645 74px 77px, transparent 79px 169px),
+		linear-gradient(#342e29, #242220 38%, #1a1c1c);
+	background-size: 410px 75px, 570px 92px, 260px 58px, 390px 190px, 470px 160px, 100% 100%;
+	box-shadow: 0 -9px 16px #17171782, inset 0 8px 13px #51453735;
+}
+
+.city-ground::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: -17px;
+	height: 24px;
+	background: #292723;
+	clip-path: polygon(0 74%, 3% 63%, 7% 78%, 11% 46%, 15% 69%, 20% 53%, 24% 77%, 29% 43%, 34% 65%, 39% 35%, 43% 75%, 48% 51%, 53% 68%, 57% 42%, 62% 72%, 67% 47%, 72% 76%, 77% 38%, 82% 63%, 87% 44%, 92% 70%, 97% 48%, 100% 69%, 100% 100%, 0 100%);
+}
+
+.city-ground::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	opacity: .3;
+	mix-blend-mode: screen;
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128'><filter id='d'><feTurbulence type='fractalNoise' baseFrequency='0.18' numOctaves='3' seed='2077' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23d)'/></svg>");
+}
+
+.city-ground--far {
+	top: 718px;
+	height: 106px;
+	filter: blur(1.5px) brightness(.7) saturate(.7);
+}
+
+.city-ground--mid {
+	top: 814px;
+	height: 153px;
+	filter: brightness(.88) saturate(.8);
+}
+
+.city-ground-haze {
+	position: absolute;
+	left: -20%;
+	width: 140%;
+	pointer-events: none;
+	background:
+		radial-gradient(ellipse 270px 48px at 12% 72%, #a59b8570, transparent 75%),
+		radial-gradient(ellipse 410px 62px at 46% 62%, #777a7770, transparent 76%),
+		radial-gradient(ellipse 310px 52px at 80% 74%, #b7a38b5c, transparent 77%),
+		linear-gradient(to bottom, transparent 23%, #80797023 61%, transparent 100%);
+	filter: blur(14px);
+	mix-blend-mode: screen;
+	animation: city-ground-smoke 24s ease-in-out infinite alternate;
+}
+
+.city-ground-haze--far {
+	top: 682px;
+	height: 155px;
+	opacity: .7;
+	animation-duration: 34s;
+}
+
+.city-ground-haze--mid {
+	top: 778px;
+	height: 202px;
+	opacity: .78;
+	animation-delay: -11s;
+}
+
+.city-atmosphere-shader {
+	position: absolute;
+	inset: 0;
+	width: 1920px;
+	height: 1080px;
+	pointer-events: none;
+	filter: blur(3px);
+}
+
+.city-vacant-lot {
+	position: absolute;
+	height: 92px;
+	background:
+		radial-gradient(ellipse at 22% 92%, #161616 0 14%, transparent 15%),
+		radial-gradient(ellipse at 67% 100%, #24211d 0 20%, transparent 21%),
+		linear-gradient(166deg, transparent 0 69%, #2b2925 70% 75%, transparent 76%),
+		linear-gradient(12deg, transparent 0 73%, #34312c 74% 79%, transparent 80%);
+	border-bottom: 9px solid #27231e;
+}
+.city-vacant-lot::before {
+	content: "";
+	position: absolute;
+	left: 8%; right: 8%; bottom: 18px; height: 43px;
+	border: 2px solid #58564b;
+	border-bottom: 0;
+	background: repeating-linear-gradient(90deg, transparent 0 16px, #655c48 17px 18px),
+		repeating-linear-gradient(31deg, transparent 0 10px, #55554a 11px 12px, transparent 13px 23px),
+		repeating-linear-gradient(-31deg, transparent 0 10px, #55554a 11px 12px, transparent 13px 23px);
+	clip-path: polygon(0 30%, 38% 30%, 38% 0, 64% 0, 64% 36%, 100% 36%, 100% 100%, 0 100%);
+	opacity: .52;
+}
+.city-vacant-lot--1::before { left: 25%; right: 4%; height: 61px; opacity: .35; }
+.city-vacant-lot--2::before { left: 5%; right: 29%; height: 32px; opacity: .66; }
+
+.city-layer-track {
+	position: absolute;
+	inset: 0 auto auto 0;
+	width: 2600px;
+	height: 1080px;
+}
+
+.sprite-city--about .city-skyglow { filter: blur(28px) saturate(1.15); }
+.sprite-city--work .city-skyglow { filter: blur(28px) hue-rotate(54deg); }
+.sprite-city--projects .city-skyglow { filter: blur(28px) hue-rotate(-28deg) saturate(1.25); }
+
+.city-layer-repeat {
+	position: absolute;
+	top: 0;
+	width: 2600px;
+	height: 1080px;
+}
+
+.city-sprite {
+	position: absolute;
+	display: block;
+	background-repeat: no-repeat;
+	image-rendering: pixelated;
+	will-change: background-position;
+}
+
+.city-sprite--flicker { animation: city-building-flicker 9s steps(1) infinite; }
+.city-sprite--fire { animation: city-fire var(--sprite-duration) steps(6) infinite; }
+.city-sprite--nuke { opacity: 0; animation: city-nuke-event 48s linear infinite; }
+.city-sprite--vertibird { animation: city-fire var(--sprite-duration) steps(6) infinite; }
+.city-sprite--walker { animation: city-fire var(--sprite-duration) steps(8) infinite; }
+.city-sprite--synth-duel {
+	animation: city-fire var(--sprite-duration) steps(24) infinite,
+		city-synth-flash var(--sprite-duration) steps(1) infinite;
+}
+.city-sprite--fallout-dust { animation: city-fire var(--sprite-duration) steps(8) infinite; opacity: .72; }
+.city-sprite--scrub { transform-origin: 50% 100%; animation: city-scrub-sway 5s ease-in-out infinite alternate; }
+.city-sprite--terminal-pulse { animation: city-terminal-pulse 5.5s ease-in-out infinite alternate; }
+.city-sprite--interacting { transform-origin: 50% 100%; animation: city-interaction-look 6.5s ease-in-out infinite alternate; }
+
+.city-aircraft-path {
+	position: absolute;
+	inset: 0 auto auto 0;
+	width: 1px;
+	height: 1080px;
+	animation: city-aircraft-patrol 48s linear infinite;
+}
+
+.city-ghoul-path {
+	position: absolute;
+	top: 0;
+	width: 1px;
+	height: 1080px;
+	animation: city-ghoul-walk 18s linear infinite;
+}
+
+.city-interaction {
+	position: absolute;
+	top: 0;
+	width: 1px;
+	height: 1080px;
+}
+
+.city-sidewalk {
+	position: absolute;
+	inset: auto 0 103px;
+	height: 20px;
+	border-top: 2px solid #49433b;
+	border-bottom: 4px solid #696056;
+	background: repeating-linear-gradient(90deg, #3b3936 0 97px, #181b1c 97px 101px, #423d38 101px 209px),
+		linear-gradient(#47423d, #292927);
+	box-shadow: inset 0 7px 7px #10121288, 0 6px 5px #050708b0;
+}
+
+.city-road {
+	position: absolute;
+	inset: auto 0 0;
+	height: 103px;
+	background:
+		repeating-linear-gradient(90deg, transparent 0 86px, #9d733d 86px 146px, transparent 146px 270px) 0 54px / 100% 3px no-repeat,
+		radial-gradient(ellipse at 18% 78%, #72717330 0 7%, transparent 8%),
+		radial-gradient(ellipse at 81% 29%, #95846b2e 0 6%, transparent 7%),
+		repeating-linear-gradient(113deg, transparent 0 193px, #53504a70 194px 196px, transparent 197px 267px),
+		linear-gradient(#282a29, #171a1d 64%, #111418);
+	box-shadow: inset 0 11px 15px #0c0e10, 0 -15px 55px #b5793b22;
+}
+.city-road::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: repeating-linear-gradient(90deg, transparent 0 272px, #9b8c7652 273px 284px, transparent 285px 507px);
+	mask-image: linear-gradient(to bottom, transparent, #000 28%, transparent 36%);
+}
+
+.city-rain {
+	z-index: 5;
+	opacity: 0.34;
+	background-image: repeating-linear-gradient(105deg, transparent 0 23px, #a8b2b651 23px 24px, transparent 24px 87px);
+	background-size: 210px 290px;
+	mask-image: repeating-linear-gradient(to bottom, transparent 0 32px, #000 33px 40px, transparent 41px 95px);
+	animation: city-rain-fall 0.9s linear infinite;
+}
+
+.city-flash {
+	z-index: 3;
+	background: #d2dce2;
+	opacity: 0;
+	animation: city-lightning 37s steps(1) infinite;
+}
+
+.city-vignette {
+	z-index: 6;
+	background: radial-gradient(ellipse at 50% 48%, transparent 32%, #06090fd9 100%),
+		linear-gradient(to top, #05070a9c, transparent 18%, transparent 72%, #05070a56);
+}
+
+@keyframes city-cloud-drift { to { transform: translateX(-1180px); } }
+@keyframes city-skyglow-pulse { from { opacity: .55; transform: translateX(-18px) scale(.98); } to { opacity: .95; transform: translateX(22px) scale(1.04); } }
+@keyframes city-skyline-windows { 0%, 29%, 32%, 64%, 67%, 100% { opacity: .5; } 30%, 65% { opacity: .9; } 31%, 66% { opacity: .2; } }
+@keyframes city-beacon { 0%, 46%, 54%, 100% { opacity: .15; } 47%, 53% { opacity: .95; } }
+@keyframes city-terminal-pulse { from { filter: brightness(.82); } to { filter: brightness(1.22) drop-shadow(0 0 7px #66cf6c8a); } }
+@keyframes city-interaction-look { from { transform: skewX(-1deg) translateX(-2px); } to { transform: skewX(2deg) translateX(3px); } }
+@keyframes city-smoke-drift { to { transform: translate(65px, -37px) scale(1.18); opacity: .4; } }
+@keyframes city-ground-smoke { from { transform: translateX(-48px) scaleX(.97); } to { transform: translateX(58px) scaleX(1.04); } }
+@keyframes city-scrub-sway { from { transform: skewX(-2deg); } to { transform: skewX(3deg); } }
+@keyframes city-search { from { transform: rotate(-16deg); } to { transform: rotate(19deg); } }
+@keyframes city-rain-fall { to { background-position: 70px 290px; } }
+@keyframes city-fire { to { background-position-x: var(--sprite-travel); } }
+@keyframes city-synth-flash {
+	0%, 8%, 12%, 23%, 27%, 39%, 43%, 58%, 62%, 73%, 77%, 89%, 93%, 100% { filter: blur(1.3px) brightness(.72) saturate(.7) drop-shadow(0 0 5px #ed814a55); }
+	9%, 24%, 40%, 59%, 74%, 90% { filter: blur(1.3px) brightness(1.05) saturate(.8) drop-shadow(0 0 13px #ff9a4c99); }
+}
+@keyframes city-aircraft-patrol { from { transform: translateX(-220px); } to { transform: translateX(2200px); } }
+@keyframes city-ghoul-walk { from { transform: translateX(-100px); } to { transform: translateX(280px); } }
+@keyframes city-building-flicker {
+	0%, 16%, 18%, 42%, 44%, 100% { filter: brightness(1); }
+	17%, 43% { filter: brightness(0.75); }
+}
+@keyframes city-lightning {
+	0%, 59%, 60%, 60.4%, 61%, 100% { opacity: 0; }
+	59.2%, 60.2% { opacity: 0.12; }
+}
+@keyframes city-nuke-event {
+	0%, 16.66% { opacity: 0; background-position-x: 0; }
+	16.67% { opacity: 0.85; background-position-x: 0; animation-timing-function: steps(8, end); }
+	23.33% { opacity: 0.85; background-position-x: var(--sprite-travel); }
+	23.34%, 100% { opacity: 0; background-position-x: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sprite-city-world { animation: none; }
+	.sprite-city * { animation: none !important; }
+	.city-sprite--nuke { opacity: 0; }
+}
+
 .game-menu {
 	position: relative;
-	width: min(36rem, 100%);
-	padding: 1.7rem 1.45rem 1.2rem;
-	background: rgba(8, 10, 12, 0.88);
+	width: min(26rem, 100%);
+	padding: 1.15rem 1.25rem 1rem;
+	background: rgba(10, 8, 7, 0.92);
 	box-shadow:
-		inset 0 0 0 4px #0c0e0c,
-		inset 0 0 0 8px #e4e0d4,
-		inset 0 0 0 12px #0c0e0c;
+		inset 0 0 0 1px #2a211c,
+		inset 0 0 0 2px #6a4630,
+		inset 0 0 0 7px #100c0a;
 }
 
 .game-menu::before {
@@ -54,7 +507,20 @@ body {
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
-	background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.16) 0 2px, transparent 2px 4px);
+	background:
+		repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.18) 0 1px, transparent 1px 3px),
+		radial-gradient(circle at 12% 88%, rgba(90, 36, 24, 0.35), transparent 46%),
+		radial-gradient(circle at 90% 10%, rgba(40, 32, 24, 0.45), transparent 40%);
+}
+
+.game-menu::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	opacity: 0.22;
+	mix-blend-mode: multiply;
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
 
 .game-menu-kicker,
@@ -63,104 +529,116 @@ body {
 .game-menu-status,
 .game-title {
 	position: relative;
-	font-family: var(--font-pixel);
+	font-family: var(--font-sign);
+	font-weight: 400;
 }
 
 .game-title {
 	margin: 0;
-	font-size: clamp(2.35rem, 5vw, 3.9rem);
-	font-weight: 400;
-	line-height: 1.08;
-	letter-spacing: 0.04em;
-	color: #f4f1e8;
+	width: 100%;
+	font-size: clamp(3.1rem, 7vw, 4.4rem);
+	line-height: 0.92;
+	letter-spacing: 0;
+	text-align: left;
+	text-transform: none;
+	color: #e4d5c2;
 	text-shadow:
-		3px 0 0 #101210,
-		-1px 0 0 #101210,
-		0 3px 0 #101210,
-		4px 4px 0 #8afd5b;
+		1px 0 0 rgba(120, 42, 28, 0.75),
+		-1px 1px 0 #070605;
+}
+
+.game-title-line {
+	display: block;
+	width: max-content;
+	white-space: nowrap;
 }
 
 .game-menu-kicker {
 	display: flex;
 	align-items: center;
-	gap: 0.55rem;
-	margin: 0 0 0.9rem;
-	font-size: 0.72rem;
-	letter-spacing: 0.08em;
+	gap: 0.5rem;
+	margin: 0 0 0.65rem;
+	font-size: 0.78rem;
+	letter-spacing: 0.14em;
 	text-transform: uppercase;
-	color: #8afd5b;
+	color: #b08968;
 }
 
 .game-menu-blink {
-	width: 0.55rem;
-	height: 0.7rem;
-	background: #8afd5b;
-	animation: menu-blink 0.9s steps(1) infinite;
+	width: 0.42rem;
+	height: 0.42rem;
+	background: #8a5340;
+	box-shadow: 1px 1px 0 #1a100c;
 }
 
 .game-menu-role {
-	margin-top: 0.85rem;
-	font-size: 0.68rem;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
-	color: rgba(255, 255, 255, 0.72);
+	margin-top: 0.15rem;
+	font-size: 0.95rem;
+	letter-spacing: 0.04em;
+	text-transform: none;
+	color: #9c8b78;
 }
 
 .game-menu-list {
 	display: flex;
 	flex-direction: column;
-	gap: 0.35rem;
-	margin-top: 1.15rem;
+	gap: 0.15rem;
+	margin-top: 1rem;
 }
 
 .game-menu-item {
 	display: grid;
-	grid-template-columns: 1.1rem 2.2rem 1fr;
-	align-items: center;
-	padding: 0.45rem 0.35rem;
-	color: rgba(255, 255, 255, 0.78);
-	font-size: 0.78rem;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
+	grid-template-columns: 1rem 2.1rem 1fr;
+	align-items: baseline;
+	padding: 0.28rem 0.15rem;
+	color: #d9cbb8;
+	font-size: 1.2rem;
+	letter-spacing: 0.01em;
+	text-transform: none;
 	text-decoration: none;
+	box-shadow: inset 0 -1px 0 rgba(90, 70, 55, 0.35);
 }
 
 .game-menu-mark {
-	color: #8afd5b;
-	font-size: 0.85rem;
+	color: #b08968;
+	font-size: 0.9rem;
 	line-height: 1;
 }
 
-.game-menu-item.is-selected .game-menu-mark {
-	animation: menu-blink 0.9s steps(1) infinite;
-}
-
 .game-menu-item span:nth-child(2) {
-	color: rgba(255, 255, 255, 0.45);
-	font-size: 0.62rem;
+	color: #8d7464;
+	font-size: 0.78rem;
 }
 
 .game-menu-item.is-selected {
-	color: #081208;
-	background: #8afd5b;
-	box-shadow: 4px 0 0 #8afd5b, -4px 0 0 #8afd5b;
+	color: #f3e6d4;
+	background: rgba(90, 48, 32, 0.45);
+	box-shadow:
+		inset 3px 0 0 #8a5340,
+		inset 0 -1px 0 rgba(176, 120, 80, 0.45);
 }
 
 .game-menu-item.is-selected span:nth-child(2),
 .game-menu-item.is-selected .game-menu-mark {
-	color: #081208;
+	color: #e7c3a4;
 }
 
 .game-menu-status {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 0.65rem;
-	margin: 1.1rem 0 0;
-	color: rgba(255, 255, 255, 0.62);
-	font-size: 0.58rem;
+	gap: 0.55rem;
+	margin: 0.85rem 0 0;
+	color: #9c8b78;
+	font-size: 0.78rem;
 	letter-spacing: 0.04em;
-	text-transform: uppercase;
+	text-transform: none;
+}
+
+.game-menu .avail-dot {
+	background: #8a5340;
+	box-shadow: 0 0 0 1px #2a1c16;
+	animation: none;
 }
 
 .atmosphere {

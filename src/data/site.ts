@@ -18,8 +18,8 @@ export const titles: Record<SectionId, string> = {
 };
 
 export const profile = {
-	first: "HArRy",
-	last: "WebB",
+	first: "Harry",
+	last: "Webb",
 	role: ["Software", "Engineer"] as const,
 	location: "London, UK",
 	timeZone: "Europe/London",

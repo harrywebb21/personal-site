@@ -1,90 +1,48 @@
-import { useEffect, useState, type MouseEvent } from "react";
-import { nav, profile, type SectionId } from "../../data/site";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { profile, type SectionId } from "../../data/site";
+import "./terminal.css";
+import PhotoTransmission from "./PhotoTransmission";
 
-type Props = {
-	onNavigate: (section: SectionId, event: MouseEvent<HTMLAnchorElement>) => void;
-};
-
+type Props = { onNavigate: (section: SectionId, event: MouseEvent<HTMLAnchorElement>) => void };
+const transmissions = [
+  "Hey, I'm Harry. I'm a software engineer based in London. Have a look around.",
+  "I work with TypeScript, React, Next.js and Node.js. I've also worked on mobile apps with React Native.",
+  "I worked at Agomi Studio in 2024. You can find that under Work, or look through what I've made under Projects.",
+];
 export default function Home({ onNavigate }: Props) {
-	const [cursor, setCursor] = useState(0);
-
-	useEffect(() => {
-		const onKey = (event: KeyboardEvent) => {
-			const target = event.target;
-			if (target instanceof HTMLElement && target.closest("input, textarea")) return;
-			if (event.key === "ArrowDown") {
-				event.preventDefault();
-				setCursor((index) => (index + 1) % nav.length);
-			} else if (event.key === "ArrowUp") {
-				event.preventDefault();
-				setCursor((index) => (index - 1 + nav.length) % nav.length);
-			} else if (event.key === "Enter" && !(target instanceof HTMLAnchorElement)) {
-				const link = document.querySelectorAll<HTMLAnchorElement>(".game-menu-item")[cursor];
-				link?.click();
-			}
-		};
-		window.addEventListener("keydown", onKey);
-		return () => window.removeEventListener("keydown", onKey);
-	}, [cursor]);
-
-	return (
-		<div data-game-menu className="game-menu">
-			<p className="game-menu-kicker">
-				<span className="game-menu-blink" aria-hidden="true" />
-				Select
-			</p>
-			<h1 id="section-title" tabIndex={-1} className="game-title">
-				<span className="block">{profile.first}</span>
-				<span className="block">{profile.last}</span>
-			</h1>
-			<p className="game-menu-role">
-				{profile.role[0]} {profile.role[1]}
-			</p>
-			<nav aria-label="Primary" className="game-menu-list">
-				{nav.map((item, index) => (
-					<a
-						key={item.id}
-						href={`/${item.id}`}
-						className={`game-menu-item${cursor === index ? " is-selected" : ""}`}
-						onMouseEnter={() => setCursor(index)}
-						onFocus={() => setCursor(index)}
-						onClick={(event) => onNavigate(item.id, event)}
-					>
-						<span className="game-menu-mark" aria-hidden="true">
-							{cursor === index ? "▸" : ""}
-						</span>
-						<span>{item.index}</span>
-						<span>{item.label}</span>
-					</a>
-				))}
-			</nav>
-			<p className="game-menu-status">
-				<span className="avail-dot h-2 w-2 rounded-full bg-lime" aria-hidden="true" />
-				<span>{profile.availability}</span>
-				<MenuClock />
-				<span>{profile.location}</span>
-			</p>
-		</div>
-	);
-}
-
-function MenuClock() {
-	const [time, setTime] = useState("");
-
-	useEffect(() => {
-		const format = () =>
-			new Intl.DateTimeFormat("en-GB", {
-				timeZone: profile.timeZone,
-				hour: "2-digit",
-				minute: "2-digit",
-				second: "2-digit",
-				hourCycle: "h23",
-			}).format(new Date());
-		const paint = () => setTime(format());
-		paint();
-		const id = window.setInterval(paint, 1000);
-		return () => window.clearInterval(id);
-	}, []);
-
-	return <time dateTime={time || undefined}>{time || "––:––:––"}</time>;
+  const [line, setLine] = useState(0);
+  const [typed, setTyped] = useState(0);
+  const [speaking, setSpeaking] = useState(false);
+  const [voiceAvailable, setVoiceAvailable] = useState(false);
+  const speech = useRef<SpeechSynthesisUtterance | null>(null);
+  useEffect(() => {
+    setVoiceAvailable('speechSynthesis' in window);
+    const powerOff = () => { window.speechSynthesis?.cancel(); setSpeaking(false); };
+    window.addEventListener('pip-power-off', powerOff);
+    return () => { window.removeEventListener('pip-power-off', powerOff); if ('speechSynthesis' in window) window.speechSynthesis.cancel(); };
+  }, []);
+  useEffect(() => {
+    setTyped(0);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { setTyped(transmissions[line].length); return; }
+    const timer = window.setInterval(() => setTyped(n => {
+      if (n >= transmissions[line].length) window.clearInterval(timer);
+      return Math.min(n + 2, transmissions[line].length);
+    }), 32);
+    return () => window.clearInterval(timer);
+  }, [line]);
+  function stop() { window.speechSynthesis?.cancel(); setSpeaking(false); }
+  function speak() {
+    if (speaking) { stop(); return; }
+    const message = new SpeechSynthesisUtterance(transmissions[line]);
+    message.lang = 'en-GB'; message.rate = .9; message.pitch = .8;
+    message.onend = message.onerror = () => setSpeaking(false);
+    speech.current = message; window.speechSynthesis.cancel();
+    setSpeaking(true); window.speechSynthesis.speak(message);
+  }
+  return (
+    <section className="pip-home" aria-label="Harry's status">
+      <div className="pip-personnel"><div className="pip-personnel-copy"><p className="record-index">STATUS / PERSONAL</p><h1 id="section-title" tabIndex={-1}>HARRY WEBB</h1><p className="pip-role">Software engineer</p><dl className="pip-attributes"><div><dt>LOCATION</dt><dd>London, UK</dd></div><div><dt>SPECIALITY</dt><dd>Web & mobile</dd></div><div><dt>STATUS</dt><dd>{profile.availability}</dd></div></dl><div className="pip-skills"><h2>SKILLS</h2>{['TypeScript','React','Next.js','Node.js'].map((skill,i)=><div key={skill}><span>0{i+1}</span>{skill}</div>)}</div></div><PhotoTransmission speaking={speaking}/></div>
+      <div className={`pip-dialogue${speaking?' is-speaking':''}`}><div className="dialogue-name"><span>HARRY</span><span>{speaking?'● TRANSMITTING':'○ READY'}</span></div><p aria-hidden="true">{transmissions[line].slice(0,typed)}<span className="type-cursor">▌</span></p><span className="sr-only" aria-live="polite">{transmissions[line]}</span><div className="dialogue-actions"><button onClick={speak} disabled={!voiceAvailable}>{speaking?'[ STOP ]':'[ LISTEN ]'}</button><button onClick={()=>{stop();setLine(n=>(n+1)%transmissions.length)}}>[ CONTINUE ]</button><a href="/projects" onClick={e=>onNavigate('projects',e)}>[ PROJECTS ]</a></div></div>
+    </section>
+  );
 }

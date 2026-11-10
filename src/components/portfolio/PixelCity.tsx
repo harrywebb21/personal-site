@@ -28,10 +28,10 @@ type Layer = {
 };
 type RenderedLayer = { layer: Layer; canvas: HTMLCanvasElement; baseline: number; lights: Light[]; flames: Flame[] };
 
-const BRICK = ["#493d3b", "#59413d", "#684a43", "#3e4142", "#74645a", "#4c5050", "#62574f"];
-const STONE = ["#55575a", "#666568", "#77736d", "#484e54", "#817b70"];
-const NIGHT_WINDOWS = ["#d99a51", "#bd7540", "#b9a078", "#9ba8a3", "#e0b66e"];
-const NEON = ["#c34d4b", "#d29a51", "#548b8b", "#82719a", "#a95b68"];
+const BRICK = ["#34383a", "#413b38", "#51423b", "#30383d", "#62574d", "#3d4548", "#4b4541"];
+const STONE = ["#454c52", "#555b60", "#68665f", "#363f47", "#777064"];
+const NIGHT_WINDOWS = ["#d99a51", "#bd7540", "#c4a06b", "#9baba9", "#e0b66e"];
+const NEON = ["#a83e3b", "#c18b4c", "#547777", "#8c554e", "#a95b68"];
 const METAL = ["#42494a", "#606665", "#292f33", "#777267"];
 
 function mulberry32(seed: number) {
@@ -74,18 +74,18 @@ function createCity(seed: number, width: number, street: "far" | "mid" | "near",
     if (kind === "tower") h += 72;
     if (kind === "gothic") h += 112;
     if (kind === "brownstone") h = Math.min(h, 240 + Math.floor(r() * 70));
-    const landmarkSlot = street === "far" ? -1 : Math.floor(x / 1050) % 4;
-    const landmarkRoll = hash(seed + Math.floor(x / 1050) * 97 + Math.floor(x / 180) * 13) % 100;
-    const landmark = landmarkRoll < 22
+    const landmarkSlot = street === "far" ? -1 : Math.floor(x / 760) % 4;
+    const landmarkRoll = hash(seed + Math.floor(x / 760) * 97 + Math.floor(x / 180) * 13) % 100;
+    const landmark = landmarkRoll < 29
       ? (["cathedral", "clock", "ruin", "skybridge"] as const)[landmarkSlot]
       : null;
     buildings.push({
-      x, w, h, kind, palette: Math.floor(r() * (kind === "gothic" || kind === "civic" ? STONE.length : BRICK.length)), sign: street === "near" && r() > .84,
+      x, w, h, kind, palette: Math.floor(r() * (kind === "gothic" || kind === "civic" ? STONE.length : BRICK.length)), sign: street !== "far" && r() > .78,
       fire: street === "near" && r() > .96, escape: street === "near" && (kind === "tenement" || kind === "walkup" || kind === "loft") && r() > .32,
       antenna: r() > .81, tank: street !== "far" && r() > .82, ac: street === "near" && r() > .32,
-      boarded: street === "near" && r() > .81, dark: r() > .76,
-      gargoyles: (kind === "gothic" || kind === "civic") && street !== "far" && r() > .28,
-      damage: street !== "far" && r() > .43, rooftopChaos: street !== "far" && r() > .34, landmark,
+      boarded: street !== "far" && r() > .72, dark: r() > .70,
+      gargoyles: (kind === "gothic" || kind === "civic") && street !== "far" && r() > .22,
+      damage: street !== "far" && r() > .34, rooftopChaos: street !== "far" && r() > .28, landmark,
     });
     x += Math.max(42, w - (street === "near" ? 10 + Math.floor(r() * 20) : 4 + Math.floor(r() * 12)));
   }
@@ -233,8 +233,15 @@ function drawRoof(g: CanvasRenderingContext2D, b: Building, x: number, top: numb
   }
   if (b.antenna) {
     const ax = x + Math.floor(faceW * (.25 + (hash(b.x + 17) % 45) / 100));
-    rect(g, "#242a2b", ax, top - 48, 2, 45); rect(g, "#77817d", ax - 7, top - 34, 16, 1);
-    rect(g, "#77817d", ax - 4, top - 42, 10, 1); rect(g, "#f6b84c", ax - 1, top - 50, 4, 3);
+    rect(g, "#242a2a", ax, top - 48, 2, 45); rect(g, "#77817d", ax - 7, top - 34, 16, 1);
+    rect(g, "#77817d", ax - 4, top - 42, 10, 1); rect(g, "#c04b3d", ax - 1, top - 50, 4, 3);
+    // Small microwave relay dish: communications infrastructure on the skyline.
+    if (hash(b.x + 83) % 3 === 0) {
+      rect(g, "#333d40", ax + 12, top - 24, 2, 21);
+      rect(g, "#7b817b", ax + 5, top - 28, 15, 3);
+      rect(g, "#252d31", ax + 7, top - 31, 11, 3);
+      rect(g, "#c04b3d", ax + 12, top - 33, 2, 2);
+    }
   }
   if (b.kind === "warehouse" || b.kind === "loft") {
     rect(g, "#171d20", x + 8, top - 13, 30, 10); rect(g, "#59605d", x + 11, top - 11, 24, 6);
@@ -246,9 +253,12 @@ function drawNeon(g: CanvasRenderingContext2D, b: Building, x: number, top: numb
   if (!b.sign) return;
   const color = NEON[hash(b.x + b.h) % NEON.length]; const y = top + 58 + (hash(b.x) % 3) * 24;
   const w = Math.min(faceW - 12, 86); if (w < 28) return;
-  rect(g, "#11171c", x + 6, y, w, 22); rect(g, "#59605d", x + 6, y, w, 2);
-  rect(g, color, x + 10, y + 5, w - 20, 2); rect(g, color, x + 10, y + 10, w - 28, 2);
-  rect(g, shade(color, -35), x + 6, y + 22, w, 2);
+  rect(g, "#10171b", x + 6, y, w, 25); rect(g, "#59605d", x + 6, y, w, 2);
+  // A corporate/public-information panel: broken red header, cold display and amber warning strip.
+  rect(g, color, x + 10, y + 5, w - 20, 3); rect(g, "#9aa5a0", x + 10, y + 11, w - 28, 2);
+  rect(g, "#9aa5a0", x + 10, y + 16, Math.max(8, w - 42), 2);
+  rect(g, "#c18b4c", x + w - 18, y + 15, 7, 5);
+  rect(g, shade(color, -35), x + 6, y + 25, w, 2);
   // Pixel tubes and brackets give the sign a physical mounting.
   rect(g, "#252b2c", x + 12, y - 5, 2, 5); rect(g, "#252b2c", x + w - 10, y - 5, 2, 5);
 }
@@ -310,9 +320,18 @@ function drawLandmark(g: CanvasRenderingContext2D, b: Building, x: number, top: 
 
 function drawBuilding(g: CanvasRenderingContext2D, b: Building, baseline: number, layer: Layer, lights: Light[]) {
   const x = b.x; const top = baseline - b.h; const stone = b.kind === "gothic" || b.kind === "civic" || b.kind === "deco" || b.kind === "tower"; const palette = stone ? STONE : BRICK; const base = layer.depth < .45 ? ["#30383e", "#3a4044", "#46494a"][b.palette % 3] : palette[b.palette % palette.length];
-  const faceW = drawBrickFacade(g, b, x, top, baseline, base, layer.depth);
+  const faceW = b.w - Math.max(8, Math.floor(b.w * .13));
+  // Rooftop silhouettes are painted first; the facade then masks their lower edges.
   drawRoof(g, b, x, top, faceW, base);
   drawLandmark(g, b, x, top, faceW);
+  drawBrickFacade(g, b, x, top, baseline, base, layer.depth);
+  // Wall-mounted CCTV cameras on selected buildings, aimed down at the street.
+  if (layer.depth > .45 && hash(b.x * 31 + b.h) % 4 === 0 && faceW > 72) {
+    const cx = x + faceW - 16; const cy = top + 34 + (hash(b.x + 9) % 3) * 27;
+    rect(g, "#171e23", cx - 5, cy - 3, 8, 3); rect(g, "#68716e", cx, cy - 6, 3, 5);
+    rect(g, "#303a3d", cx + 2, cy - 4, 9, 5); rect(g, "#b84b3d", cx + 9, cy - 3, 2, 2);
+    rect(g, "#171e23", cx + 4, cy + 1, 2, 5);
+  }
   const floorGap = b.kind === "warehouse" ? 46 : b.kind === "brownstone" ? 42 : b.kind === "gothic" || b.kind === "civic" ? 48 : 38;
   const winW = b.kind === "warehouse" ? 24 : b.kind === "brownstone" ? 13 : b.kind === "gothic" || b.kind === "civic" ? 12 : 15;
   const winH = b.kind === "warehouse" ? 27 : b.kind === "gothic" || b.kind === "civic" ? 29 : 21;
@@ -535,7 +554,7 @@ function renderStrip(layer: Layer): RenderedLayer {
 
 function paintNightSky(g: CanvasRenderingContext2D, width: number, height: number, time: number) {
   const gradient = g.createLinearGradient(0, 0, 0, height);
-  gradient.addColorStop(0, "#080d18"); gradient.addColorStop(.42, "#151c29"); gradient.addColorStop(.78, "#252b32"); gradient.addColorStop(1, "#393631");
+  gradient.addColorStop(0, "#070b13"); gradient.addColorStop(.42, "#111923"); gradient.addColorStop(.78, "#20282e"); gradient.addColorStop(1, "#302d2a");
   g.fillStyle = gradient; g.fillRect(0, 0, width, height);
   // Heavy storm clouds: layered, broken pixel masses instead of a clean starry sky.
   const cloudR = mulberry32(177);
@@ -549,15 +568,42 @@ function paintNightSky(g: CanvasRenderingContext2D, width: number, height: numbe
     rect(g, "rgba(105,91,83,.10)", cx + 20, cy + 7, cw * .7, 3);
   }
   // Dirty amber city glow sits low beneath the storm ceiling.
-  const glow = g.createLinearGradient(0, height * .48, 0, height);
-  glow.addColorStop(0, "rgba(115,82,64,0)"); glow.addColorStop(.55, "rgba(143,91,58,.10)"); glow.addColorStop(1, "rgba(194,126,68,.23)");
-  g.fillStyle = glow; g.fillRect(0, height * .45, width, height * .55);
+  const glow = g.createLinearGradient(0, height * .34, 0, height);
+  glow.addColorStop(0, "rgba(90,58,49,0)"); glow.addColorStop(.52, "rgba(125,68,49,.12)"); glow.addColorStop(1, "rgba(157,86,51,.20)");
+  g.fillStyle = glow; g.fillRect(0, height * .34, width, height * .66);
+  // Slow security searchlights sweep the cloud ceiling from unseen checkpoints.
+  g.save(); g.globalCompositeOperation = "screen";
+  for (let i = 0; i < 3; i++) {
+    const pivotX = width * (.16 + i * .34); const pivotY = height * (.73 + (i % 2) * .035);
+    const angle = Math.sin(time * (.18 + i * .035) + i * 2.2) * .42 + (i - 1) * .12;
+    const reach = height * .82; const spread = height * .18;
+    const endX = pivotX + Math.sin(angle) * reach; const endY = pivotY - Math.cos(angle) * reach;
+    const grad = g.createLinearGradient(pivotX, pivotY, endX, endY);
+    grad.addColorStop(0, "rgba(169,185,177,.02)"); grad.addColorStop(.72, "rgba(169,185,177,.055)"); grad.addColorStop(1, "rgba(169,185,177,0)");
+    g.fillStyle = grad; g.beginPath(); g.moveTo(pivotX - 5, pivotY); g.lineTo(endX - spread * .5, endY); g.lineTo(endX + spread * .5, endY); g.lineTo(pivotX + 5, pivotY); g.closePath(); g.fill();
+    rect(g, "rgba(194,76,55,.55)", pivotX - 2, pivotY - 3, 4, 3);
+  }
+  g.restore();
+  // Red obstruction beacons and distant tower strobes puncture the skyline.
+  for (let i = 0; i < 9; i++) {
+    const x = (i * 211 + 73) % width; const y = height * (.25 + (i % 4) * .055);
+    if (Math.sin(time * 2.1 + i * 1.7) > -.1) rect(g, "#b94c3d", x, y, 3, 3);
+  }
   // Persistent rain slants across the scene. Pixel-sized and intentionally uneven.
   for (let i = 0; i < Math.floor(width * .11); i++) {
     const seed = hash(i * 71 + 19);
     const x = (seed % width + Math.floor(time * (24 + seed % 24))) % width;
     const y = (Math.floor(seed / 7) % height + Math.floor(time * (95 + seed % 65))) % height;
     rect(g, "rgba(151,169,177,.20)", x, y, 1, 4 + seed % 5);
+  }
+  // Surveillance drones drift in slow patrol paths between the towers.
+  for (let i = 0; i < 4; i++) {
+    const seed = hash(i * 613 + 71); const dx = (seed % width + Math.floor(time * (8 + i * 2))) % width;
+    const dy = Math.floor(height * (.19 + (seed % 24) / 100));
+    rect(g, "rgba(7,12,18,.92)", dx - 5, dy, 12, 3);
+    rect(g, "#68716e", dx - 2, dy - 2, 6, 2);
+    if (Math.sin(time * 3 + i) > .1) rect(g, "#c04b3d", dx + 5, dy + 1, 2, 2);
+    rect(g, "rgba(190,78,61,.18)", dx + 5, dy + 3, 1, 8);
   }
   // Distant aircraft beacons and sparse high-rise lights, not a field of stars.
   for (let i = 0; i < 14; i++) {
@@ -593,9 +639,9 @@ function paintFlame(g: CanvasRenderingContext2D, x: number, y: number, time: num
 }
 
 function makeLayers(viewH: number): RenderedLayer[] {
-  const far = createCity(11, 3000, "far", Math.max(125, viewH * .14));
-  const mid = createCity(29, 3200, "mid", Math.max(175, viewH * .19));
-  const near = createCity(47, 3400, "near", Math.max(235, viewH * .22));
+  const far = createCity(11, 3600, "far", Math.max(125, viewH * .14));
+  const mid = createCity(29, 3600, "mid", Math.max(175, viewH * .19));
+  const near = createCity(47, 3600, "near", Math.max(235, viewH * .22));
   const layers: Layer[] = [
     { ...far, pad: 0, speed: 7, horizon: .61, depth: .22, palette: 0 },
     { ...mid, pad: 0, speed: 17, horizon: .77, depth: .56, palette: 1 },
@@ -629,9 +675,11 @@ export default function PixelCity() {
           const left = Math.round(x); ctx.drawImage(strip.canvas, left, y);
           for (const light of strip.lights) {
             if (light.flicker) {
-              const cycle = Math.sin(time * 0.11 + light.phase);
-              if ((Math.floor(light.phase) % 5) === 0 && cycle < -0.72) continue;
-              ctx.globalAlpha = 0.72;
+              const cycle = Math.sin(time * 0.34 + light.phase * 0.071);
+              const flicker = Math.sin(time * 5.7 + light.phase * 1.91);
+              // Windows switch on and off at different times; some briefly buzz.
+              if (cycle < -0.18 || (cycle < 0.12 && flicker < -0.35)) continue;
+              ctx.globalAlpha = 0.68 + (flicker > 0.82 ? 0.22 : 0);
             }
             ctx.fillStyle = light.color;
             ctx.fillRect(left + light.x, y + light.y, light.w, light.h);
@@ -641,7 +689,7 @@ export default function PixelCity() {
         }
       }
       const vignette = ctx.createLinearGradient(0, 0, 0, height);
-      vignette.addColorStop(0, "rgba(5,9,16,.18)"); vignette.addColorStop(.55, "rgba(5,9,16,0)"); vignette.addColorStop(1, "rgba(5,8,11,.26)");
+      vignette.addColorStop(0, "rgba(3,6,11,.28)"); vignette.addColorStop(.48, "rgba(5,9,16,.02)"); vignette.addColorStop(1, "rgba(3,5,8,.38)");
       ctx.fillStyle = vignette; ctx.fillRect(0, 0, width, height);
     };
     const loop = (now: number) => { if (!running) return; draw(now); frame = window.requestAnimationFrame(loop); };
