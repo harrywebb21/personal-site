@@ -1,54 +1,72 @@
+import { useRef } from "react";
 import { experience } from "../../data/site";
+import { useStageMotion } from "./stage-motion";
 
 export default function Work() {
+	const root = useRef<HTMLElement>(null);
+	useStageMotion(root);
+
 	return (
-		<div className="mx-auto w-full max-w-5xl">
-			<p className="text-xs font-medium tracking-[0.32em] text-lime">02</p>
-			<h1
-				id="section-title"
-				tabIndex={-1}
-				className="mt-3 font-display text-5xl font-extrabold tracking-[-0.04em] outline-none sm:text-7xl"
-			>
-				Work
-			</h1>
-			<div className="mt-10 space-y-5 sm:mt-14">
-				{experience.map((job) => (
-					<article
-						key={job.company}
-						className="grid gap-6 rounded-3xl border border-white/10 bg-white/[0.035] p-5 sm:p-7 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:gap-8"
-					>
+		<section ref={root} className="stage">
+			<header className="stage-hero" data-hero>
+				<p className="watermark" data-watermark aria-hidden="true">
+					02
+				</p>
+				<div data-reveal>
+					<p className="game-menu-kicker">
+						<span className="game-menu-blink" aria-hidden="true" />
+						Stage 02
+					</p>
+					<h1 id="section-title" tabIndex={-1} className="game-title stage-title">
+						Work
+					</h1>
+					<p className="game-menu-role">High scores</p>
+				</div>
+			</header>
+
+			<div className="screen-panel" data-reveal>
+				<div className="score-head" aria-hidden="true">
+					<span>Rank</span>
+					<span />
+					<span>Stage</span>
+					<span>Score</span>
+				</div>
+				{experience.map((job, index) => (
+					<article key={job.company} className="score-entry">
+						<p className="rank">0{index + 1}</p>
 						<img
 							src={job.logo.src}
 							width={job.logo.width}
 							height={job.logo.height}
 							alt={job.logo.alt}
-							className="h-16 w-16 rounded-2xl object-cover sm:h-20 sm:w-20"
+							className="studio-logo"
 						/>
 						<div>
 							<a
 								href={job.href}
 								target="_blank"
 								rel="noopener noreferrer"
-								className="font-display text-3xl font-bold tracking-[-0.03em] underline-offset-4 hover:underline sm:text-4xl"
+								className="score-link"
+								data-press
 							>
-								{job.company}
+								<span data-press-target>{job.company}</span>
 							</a>
-							<p className="mt-1 text-base text-white/70 sm:text-lg">{job.role}</p>
-							<ul className="mt-5 space-y-3">
-								{job.points.map((point) => (
-									<li key={point} className="flex gap-3 text-sm leading-relaxed text-white/75 sm:text-base">
-										<span className="mt-[0.55em] h-1.5 w-1.5 shrink-0 rounded-full bg-lime" aria-hidden="true" />
-										<span>{point}</span>
-									</li>
-								))}
-							</ul>
+							<p className="role-line">{job.role}</p>
 						</div>
-						<p className="year-mark font-display text-5xl leading-none font-extrabold tracking-[-0.04em] sm:text-6xl md:text-right">
+						<p className="score-year" data-score={job.year}>
 							{job.year}
 						</p>
+						<ul className="missions">
+							{job.points.map((point) => (
+								<li key={point}>
+									<span aria-hidden="true">▸</span>
+									{point}
+								</li>
+							))}
+						</ul>
 					</article>
 				))}
 			</div>
-		</div>
+		</section>
 	);
 }

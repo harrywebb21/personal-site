@@ -1,39 +1,50 @@
+import { useRef } from "react";
 import { projects } from "../../data/site";
+import { useStageMotion } from "./stage-motion";
 
 export default function Projects() {
+	const root = useRef<HTMLElement>(null);
+	useStageMotion(root);
+
 	return (
-		<div className="mx-auto w-full max-w-5xl">
-			<p className="text-xs font-medium tracking-[0.32em] text-lime">03</p>
-			<h1
-				id="section-title"
-				tabIndex={-1}
-				className="mt-3 font-display text-5xl font-extrabold tracking-[-0.04em] outline-none sm:text-7xl"
-			>
-				Projects
-			</h1>
-			<ul className="mt-10 grid gap-5 sm:mt-14 md:grid-cols-2">
+		<section ref={root} className="stage">
+			<header className="stage-hero" data-hero>
+				<p className="watermark" data-watermark aria-hidden="true">
+					03
+				</p>
+				<div data-reveal>
+					<p className="game-menu-kicker">
+						<span className="game-menu-blink" aria-hidden="true" />
+						Stage 03
+					</p>
+					<h1 id="section-title" tabIndex={-1} className="game-title stage-title">
+						Projects
+					</h1>
+					<p className="game-menu-role">Cartridge select</p>
+				</div>
+			</header>
+
+			<ul className="cart-grid">
 				{projects.map((project, index) => (
-					<li key={project.name}>
-						<figure className="overflow-hidden rounded-3xl border border-white/10 bg-black">
-							<div className="flex aspect-square items-center justify-center">
-								<img
-									src={project.image.src}
-									width={project.image.width}
-									height={project.image.height}
-									alt={project.image.alt}
-									className="h-full w-full object-contain"
-								/>
-							</div>
-							<figcaption className="flex items-baseline justify-between border-t border-white/10 px-5 py-4">
-								<span className="font-display text-2xl font-bold tracking-[-0.03em]">{project.name}</span>
-								<span className="text-xs font-medium tracking-[0.22em] text-white/60" aria-hidden="true">
-									0{index + 1}
-								</span>
-							</figcaption>
-						</figure>
+					<li key={project.name} className="cartridge" data-reveal data-cart>
+						<div className="cart-label">
+							<span>
+								0{index + 1} {project.name}
+							</span>
+							<span className="cart-ready">▸ Ready</span>
+						</div>
+						<div className="cart-screen">
+							<img
+								src={project.image.src}
+								width={project.image.width}
+								height={project.image.height}
+								alt={project.image.alt}
+							/>
+							<span className="scanline" aria-hidden="true" />
+						</div>
 					</li>
 				))}
 			</ul>
-		</div>
+		</section>
 	);
 }
