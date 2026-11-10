@@ -1,0 +1,257 @@
+.world-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: #080b12;
+}
+
+.world-scene > div {
+  position: absolute;
+  inset: 0;
+}
+
+.world-scene__backdrop {
+  background: var(--world-image) center center / cover no-repeat;
+  image-rendering: pixelated;
+}
+
+.world-scene__skybox {
+  z-index: 1;
+  inset: 0 0 auto !important;
+  height: 43%;
+  overflow: hidden;
+  mix-blend-mode: screen;
+}
+
+.world-scene__firework {
+  --frame-width: clamp(150px, 21vh, 256px);
+  --frame-height: var(--frame-width);
+  position: absolute;
+  width: var(--frame-width);
+  height: var(--frame-height);
+  background: url('/worlds/packers-fireworks.webp') 0 0 / calc(var(--frame-width) * 8) var(--frame-height) no-repeat;
+  image-rendering: pixelated;
+  animation: world-actor-frames 5.2s steps(8) infinite;
+}
+
+.world-scene__firework--one { left: 37%; top: 4%; }
+.world-scene__firework--two {
+  left: 66%;
+  top: 10%;
+  scale: .72;
+  filter: hue-rotate(-28deg);
+  animation-duration: 6.1s;
+  animation-delay: -3.2s;
+}
+
+.world-scene__field-play {
+  --frame-width: clamp(185px, 24vh, 290px);
+  --frame-height: calc(var(--frame-width) * .45);
+  position: absolute;
+  z-index: 2;
+  top: auto !important;
+  right: auto !important;
+  left: 46%;
+  bottom: 34%;
+  width: var(--frame-width);
+  height: var(--frame-height);
+  background: url('/worlds/packers-field-play.webp') 0 0 / calc(var(--frame-width) * 8) var(--frame-height) no-repeat;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 6px 3px #0923199c);
+  animation: world-actor-frames 1.25s steps(8) infinite,
+    world-field-play-traverse 9s ease-in-out infinite alternate;
+}
+
+.world-scene__actor-track {
+  z-index: 3;
+  inset: auto auto 0 0 !important;
+  width: 100%;
+  height: 100%;
+}
+
+.world-scene__ground {
+  z-index: 1;
+  inset: auto 0 0 !important;
+  height: 22%;
+  background: linear-gradient(to bottom, transparent, #03070e32 68%, #03070e77);
+}
+
+.world-scene--about .world-scene__ground {
+  background: linear-gradient(to bottom, transparent, #06071424 60%, #09071770),
+    repeating-linear-gradient(101deg, transparent 0 98px, #e9a7f00a 100px 102px, transparent 104px 200px);
+}
+
+.world-scene--work .world-scene__ground {
+  background: linear-gradient(to bottom, transparent, #080c1e22 55%, #080c1e79);
+}
+
+.world-scene--projects .world-scene__ground {
+  height: 22%;
+  background: linear-gradient(to bottom, transparent, #0310092b 65%, #020b086a);
+}
+
+.world-scene__props {
+  inset: 0;
+}
+
+.world-scene__props--mid { z-index: 2; }
+.world-scene__props--front { z-index: 4; }
+.world-scene__props img {
+  position: absolute;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 7px 7px #020409a8);
+}
+
+.world-scene--work .world-scene__props img[src*="drone"] {
+  animation: world-drone-hover 3s ease-in-out infinite alternate;
+}
+
+.world-scene--about .world-scene__props img[src*="flag"],
+.world-scene--projects .world-scene__props img[src*="flag"] {
+  animation: world-flag-sway 3.4s ease-in-out infinite alternate;
+  transform-origin: center bottom;
+}
+
+.world-scene__actor {
+  position: absolute;
+  width: var(--frame-width);
+  height: var(--frame-height);
+  background: var(--actor-image) 0 0 / calc(var(--frame-width) * 8) var(--frame-height) no-repeat;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 8px 6px #030409aa);
+  animation: world-actor-frames var(--frame-speed) steps(8) infinite;
+}
+
+.world-scene__actor--about {
+  --frame-width: clamp(190px, 29.6vh, 350px);
+  --frame-height: calc(var(--frame-width) / 2);
+  --frame-speed: 1.15s;
+  left: 30%;
+  bottom: 13%;
+  animation: world-actor-frames var(--frame-speed) steps(8) infinite,
+    world-car-drift 7s ease-in-out infinite alternate;
+}
+
+.world-scene__actor--work {
+  --frame-width: clamp(78px, 11.85vh, 145px);
+  --frame-height: calc(var(--frame-width) * 2);
+  --frame-speed: .9s;
+  left: 16%;
+  bottom: 13%;
+  animation: world-actor-frames var(--frame-speed) steps(8) infinite,
+    world-actor-walk 18s linear infinite alternate;
+}
+
+.world-scene__actor--projects {
+  --frame-width: clamp(78px, 11.85vh, 145px);
+  --frame-height: calc(var(--frame-width) * 2);
+  --frame-speed: .72s;
+  left: 22%;
+  bottom: 13%;
+  animation: world-actor-frames var(--frame-speed) steps(8) infinite,
+    world-player-run 12s linear infinite alternate;
+}
+
+.world-scene--about .world-scene__atmosphere {
+  inset: auto -18% -11%;
+  height: 47%;
+  opacity: .68;
+  background: radial-gradient(ellipse 26% 34% at 15% 76%, #d9d2eb75, transparent 80%),
+    radial-gradient(ellipse 29% 40% at 72% 68%, #c6c9e890, transparent 83%),
+    radial-gradient(ellipse 22% 29% at 94% 45%, #c7b7e16b, transparent 84%);
+  filter: blur(24px);
+  animation: world-drift-smoke 8s ease-in-out infinite alternate;
+}
+
+.world-scene--about .world-scene__glow {
+  background: radial-gradient(ellipse 25% 29% at 17% 50%, #ee42d933, transparent 78%),
+    radial-gradient(ellipse 30% 28% at 78% 48%, #00daf12d, transparent 78%),
+    linear-gradient(115deg, transparent 33%, #ffcd8955 49%, transparent 61%);
+  mix-blend-mode: screen;
+  animation: world-drift-lights 7s ease-in-out infinite alternate;
+}
+
+.world-scene--about .world-scene__particles {
+  inset: auto 0 5%;
+  height: 39%;
+  background-image: radial-gradient(circle, #e8c6ecb3 0 1px, transparent 2px),
+    radial-gradient(circle, #82daf1a3 0 1px, transparent 2px);
+  background-size: 179px 113px, 241px 157px;
+  opacity: .38;
+  mask-image: linear-gradient(transparent, #000 50%);
+  animation: world-drift-sparks 12s linear infinite;
+}
+
+.world-scene--work .world-scene__atmosphere {
+  background: linear-gradient(120deg, transparent 35%, #26ddff12 50%, transparent 65%),
+    radial-gradient(ellipse 28% 45% at 17% 55%, #ff35ce36, transparent 80%),
+    radial-gradient(ellipse 30% 42% at 76% 65%, #25f5ff30, transparent 80%);
+  mix-blend-mode: screen;
+  animation: world-neon 8s ease-in-out infinite alternate;
+}
+
+.world-scene--work .world-scene__glow {
+  background: repeating-linear-gradient(90deg, transparent 0 155px, #7e4dff12 156px 158px, transparent 159px 321px);
+  filter: blur(12px);
+  animation: world-arcade-glitch 12s steps(1) infinite;
+}
+
+.world-scene--work .world-scene__particles {
+  background-image: radial-gradient(circle, #e9baff8c 0 1px, transparent 2px),
+    radial-gradient(circle, #8ef5ff9c 0 1px, transparent 2px);
+  background-size: 193px 151px, 257px 211px;
+  opacity: .38;
+  animation: world-motes 15s linear infinite;
+}
+
+.world-scene--projects .world-scene__atmosphere {
+  background: radial-gradient(ellipse 24% 58% at 5% 3%, #f7f9ff44, transparent 85%),
+    radial-gradient(ellipse 24% 58% at 95% 3%, #f7f9ff44, transparent 85%),
+    linear-gradient(to bottom, #e7edff0f, transparent 60%);
+  mix-blend-mode: screen;
+  animation: world-stadium-pulse 7s ease-in-out infinite alternate;
+}
+
+.world-scene--projects .world-scene__glow {
+  background: linear-gradient(110deg, transparent 20%, #fff8dc24 48%, transparent 64%);
+  clip-path: polygon(0 9%, 100% 9%, 100% 82%, 0 82%);
+  mix-blend-mode: screen;
+  animation: world-stadium-sweep 14s ease-in-out infinite alternate;
+}
+
+.world-scene--projects .world-scene__particles {
+  inset: 16% 0 auto;
+  height: 38%;
+  background-image: radial-gradient(circle, #ffe6a5b3 0 1px, transparent 2px);
+  background-size: 83px 61px;
+  opacity: .24;
+  mask-image: linear-gradient(#000, transparent 85%);
+  animation: world-crowd 3s steps(2) infinite;
+}
+
+@keyframes world-drift-smoke { to { transform: translate(-9%, -9%) scale(1.16); opacity: .38; } }
+@keyframes world-drift-lights { to { opacity: .7; transform: translateX(3%); } }
+@keyframes world-drift-sparks { to { background-position: 105px -35px, -75px -22px; opacity: .17; } }
+@keyframes world-actor-frames { to { background-position-x: calc(var(--frame-width) * -8); } }
+@keyframes world-car-drift { to { translate: 8vw -1.3vh; } }
+@keyframes world-actor-walk { to { translate: 57vw 0; } }
+@keyframes world-player-run { to { translate: 17vw 0; } }
+@keyframes world-field-play-traverse { to { translate: 12vw -2vh; } }
+@keyframes world-drone-hover { to { translate: 0 -14px; filter: drop-shadow(0 8px 13px #00deff99); } }
+@keyframes world-flag-sway { to { transform: skewX(-3deg) scaleX(.95); } }
+@keyframes world-neon { to { opacity: .6; filter: hue-rotate(12deg); } }
+@keyframes world-arcade-glitch { 0%, 47%, 49%, 74%, 76%, 100% { opacity: .25; } 48%, 75% { opacity: .7; } }
+@keyframes world-motes { to { background-position: 90px -120px, -60px -80px; } }
+@keyframes world-stadium-pulse { to { opacity: .72; } }
+@keyframes world-stadium-sweep { to { transform: translateX(18%); opacity: .35; } }
+@keyframes world-crowd { 50% { opacity: .1; background-position: 31px 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .world-scene > div { animation: none !important; }
+  .world-scene__actor { animation: none !important; }
+  .world-scene__props img { animation: none !important; }
+  .world-scene__firework, .world-scene__field-play { animation: none !important; }
+}

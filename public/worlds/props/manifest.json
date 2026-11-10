@@ -1,0 +1,128 @@
+{
+  "jdm": {
+    "car": {
+      "src": "/worlds/props/jdm-car.webp",
+      "width": 414,
+      "height": 143
+    },
+    "tires": {
+      "src": "/worlds/props/jdm-tires.webp",
+      "width": 309,
+      "height": 319
+    },
+    "barrier": {
+      "src": "/worlds/props/jdm-barrier.webp",
+      "width": 407,
+      "height": 210
+    },
+    "floodlight": {
+      "src": "/worlds/props/jdm-floodlight.webp",
+      "width": 258,
+      "height": 385
+    },
+    "cones": {
+      "src": "/worlds/props/jdm-cones.webp",
+      "width": 345,
+      "height": 321
+    },
+    "mechanic": {
+      "src": "/worlds/props/jdm-mechanic.webp",
+      "width": 156,
+      "height": 413
+    },
+    "flag": {
+      "src": "/worlds/props/jdm-flag.webp",
+      "width": 304,
+      "height": 357
+    },
+    "camera": {
+      "src": "/worlds/props/jdm-camera.webp",
+      "width": 304,
+      "height": 381
+    }
+  },
+  "arcade": {
+    "cabinet": {
+      "src": "/worlds/props/arcade-cabinet.webp",
+      "width": 304,
+      "height": 428
+    },
+    "vending": {
+      "src": "/worlds/props/arcade-vending.webp",
+      "width": 289,
+      "height": 418
+    },
+    "kiosk": {
+      "src": "/worlds/props/arcade-kiosk.webp",
+      "width": 232,
+      "height": 403
+    },
+    "neon-sign": {
+      "src": "/worlds/props/arcade-neon-sign.webp",
+      "width": 229,
+      "height": 427
+    },
+    "planter": {
+      "src": "/worlds/props/arcade-planter.webp",
+      "width": 398,
+      "height": 366
+    },
+    "robot": {
+      "src": "/worlds/props/arcade-robot.webp",
+      "width": 311,
+      "height": 404
+    },
+    "drone": {
+      "src": "/worlds/props/arcade-drone.webp",
+      "width": 421,
+      "height": 308
+    },
+    "cartridges": {
+      "src": "/worlds/props/arcade-cartridges.webp",
+      "width": 408,
+      "height": 268
+    }
+  },
+  "packers": {
+    "bench": {
+      "src": "/worlds/props/packers-bench.webp",
+      "width": 421,
+      "height": 265
+    },
+    "coolers": {
+      "src": "/worlds/props/packers-coolers.webp",
+      "width": 360,
+      "height": 378
+    },
+    "helmet": {
+      "src": "/worlds/props/packers-helmet.webp",
+      "width": 367,
+      "height": 319
+    },
+    "football": {
+      "src": "/worlds/props/packers-football.webp",
+      "width": 204,
+      "height": 367
+    },
+    "chain-marker": {
+      "src": "/worlds/props/packers-chain-marker.webp",
+      "width": 113,
+      "height": 415
+    },
+    "trunk": {
+      "src": "/worlds/props/packers-trunk.webp",
+      "width": 385,
+      "height": 303
+    },
+    "camera": {
+      "src": "/worlds/props/packers-camera.webp",
+      "width": 313,
+      "height": 395
+    },
+    "flag": {
+      "src": "/worlds/props/packers-flag.webp",
+      "width": 342,
+      "height": 403
+    }
+  }
+}

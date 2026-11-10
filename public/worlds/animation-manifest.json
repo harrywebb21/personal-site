@@ -1,0 +1,52 @@
+{
+  "jdm-drift-loop": {
+    "src": "/worlds/jdm-drift-loop.webp",
+    "frames": 8,
+    "frameWidth": 320,
+    "frameHeight": 160,
+    "width": 2560,
+    "height": 160,
+    "distinctFrames": 8,
+    "bytes": 375494
+  },
+  "arcade-patron-walk": {
+    "src": "/worlds/arcade-patron-walk.webp",
+    "frames": 8,
+    "frameWidth": 128,
+    "frameHeight": 256,
+    "width": 1024,
+    "height": 256,
+    "distinctFrames": 8,
+    "bytes": 221240
+  },
+  "packers-watson-run": {
+    "src": "/worlds/packers-watson-run.webp",
+    "frames": 8,
+    "frameWidth": 128,
+    "frameHeight": 256,
+    "width": 1024,
+    "height": 256,
+    "distinctFrames": 8,
+    "bytes": 177464
+  },
+  "packers-field-play": {
+    "src": "/worlds/packers-field-play.webp",
+    "frames": 8,
+    "frameWidth": 400,
+    "frameHeight": 180,
+    "width": 3200,
+    "height": 180,
+    "distinctFrames": 8,
+    "bytes": 585502
+  },
+  "packers-fireworks": {
+    "src": "/worlds/packers-fireworks.webp",
+    "frames": 8,
+    "frameWidth": 256,
+    "frameHeight": 256,
+    "width": 2048,
+    "height": 256,
+    "distinctFrames": 8,
+    "bytes": 354004
+  }
+}
